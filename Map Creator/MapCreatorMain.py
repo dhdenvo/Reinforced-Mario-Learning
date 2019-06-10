@@ -11,7 +11,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 def game_loop():
-    gui = MapGui(display, 80, 240, 12, 8, 40)
+    gui = MapGui(display, 40, 80, 115, 12, 40)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:
@@ -28,4 +28,3 @@ def game_loop():
 game_loop()
 pygame.quit()
 sys.exit()
-        
