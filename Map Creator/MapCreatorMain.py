@@ -1,15 +1,31 @@
 import pygame
 import sys
+from MapGui import MapGui
 
 pygame.init()
-displaysurf = pygame.display.set_mode((1400, 788))
+display = pygame.display.set_mode((1400, 788))
 pygame.display.set_caption('Mario World Creator')
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()     
-    pygame.display.update()
+clock = pygame.time.Clock()
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
+def game_loop():
+    gui = MapGui(display, 80, 240, 12, 8, 40)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                gui.select(pos)
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()     
+        display.fill(WHITE)
+        gui.draw()        
+        pygame.display.update()
+        clock.tick(60)
+
+game_loop()
+pygame.quit()
+sys.exit()
         
