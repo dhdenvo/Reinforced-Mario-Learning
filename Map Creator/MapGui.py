@@ -3,8 +3,9 @@ import pygame
 MAX_LENGTH = 28
 
 class MapGui:
-    def __init__(self, display, x_pos, y_pos, length, height, grid_side):
+    def __init__(self, display, gui, x_pos, y_pos, length, height, grid_side):
         self.display = display
+        self.main_gui = gui        
         self.length = length
         self.height = height
         self.x_pos = x_pos
@@ -34,6 +35,7 @@ class MapGui:
             if grid_loc != (-1, -1) and pos[0] in range(grid_loc[0], grid_loc[0] + self.grid_side) and \
                pos[1] in range(grid_loc[1], grid_loc[1] + self.grid_side):
                 print(real_grid_loc)
+                self.grid_positions[real_grid_loc] = self.main_gui.get_icon()
               
       
     def __create_blank_map(self):

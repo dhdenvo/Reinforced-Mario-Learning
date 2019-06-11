@@ -4,8 +4,8 @@ from IconSelectGui import IconSelectGui
 
 class MainGui:
     def __init__(self, display):
-        self.map = MapGui(display, 40, 80, 115, 12, 40)
-        icons = [pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (40, 40)), pygame.transform.scale(pygame.image.load('./Blocks/Floor.png'), (40, 40))]
+        self.map = MapGui(display, self, 40, 80, 115, 12, 40)
+        icons = ["-", "="]
         self.icon_select = IconSelectGui(display, self, icons, 1250, 40, 40)
         self.display = display
         self.selected_icon = pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (40, 40))
