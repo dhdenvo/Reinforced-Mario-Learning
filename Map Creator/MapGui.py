@@ -39,9 +39,9 @@ class MapGui(InteractiveGui):
     
     def select(self, pos):
         for real_grid_loc in self.grid:
-            grid_loc = self.__convert_coor(real_grid_loc)            
-            if grid_loc != (-1, -1) and pos[0] in range(grid_loc[0], grid_loc[0] + self.grid_side) and \
-               pos[1] in range(grid_loc[1], grid_loc[1] + self.grid_side):
+            grid_loc = self.__convert_coor(real_grid_loc)    
+            button = InteractiveGui(None, None, grid_loc[0], grid_loc[1], self.grid_side, self.grid_side)
+            if button.select(pos):
                 print(real_grid_loc)
                 self.grid_positions[real_grid_loc] = self.main_gui.get_icon()
             
