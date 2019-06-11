@@ -1,8 +1,9 @@
+import pygame
 from InteractiveGui import InteractiveGui
 
 class ButtonGui(InteractiveGui):
-    def __init__(self, display, gui, x_pos, y_pos, length, height, text, push_function, colour = (0,0,0), font_size = 20):
-        super().__init__(self, display, gui, x_pos, y_pos, length, height, colour)
+    def __init__(self, display, gui, x_pos, y_pos, length, height, text, push_function, background_colour = (0,0,0), font_size = 20, colour = (0,0,0)):
+        super().__init__(display, gui, x_pos, y_pos, length, height, background_colour, colour)
         self.text = text
         self.font_size = font_size
         self.push_function = push_function

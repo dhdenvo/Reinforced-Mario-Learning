@@ -1,13 +1,14 @@
 import pygame
 
 class InteractiveGui:
-    def __init__(self, display, gui, x_pos, y_pos, length = 0, height = 0, colour = (0,0,0)):
+    def __init__(self, display, gui, x_pos, y_pos, length = 0, height = 0, background_colour = (0,0,0), colour = (0,0,0)):
         self.display = display
         self.main_gui = gui
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.length = length
         self.height = height
+        self.background_colour = background_colour
         self.colour = colour
         
     def select(self, pos):
@@ -16,6 +17,7 @@ class InteractiveGui:
             return True
         
     def draw(self):
+        pygame.draw.rect(self.display, self.background_colour, pygame.Rect(self.x_pos, self.y_pos, self.length, self.height))        
         pygame.draw.rect(self.display, self.colour, pygame.Rect(self.x_pos, self.y_pos, self.length, self.height), 4)
         
         
