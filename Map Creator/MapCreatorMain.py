@@ -3,6 +3,7 @@ import sys
 from MainGui import MainGui
 
 pygame.init()
+pygame.font.init()
 display = pygame.display.set_mode((1400, 788))
 pygame.display.set_caption('Mario World Creator')
 
