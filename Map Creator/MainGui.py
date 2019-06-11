@@ -6,7 +6,7 @@ class MainGui:
     def __init__(self, display):
         self.map = MapGui(display, self, 40, 80, 115, 12, 40)
         icons = ["=", "-", "-", "-", "=", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
-        self.icon_select = IconSelectGui(display, self, icons, 1240, 80, 50)
+        self.icon_select = IconSelectGui(display, self, 1240, 80, 50, icons)
         self.display = display
         self.selected_icon = pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (40, 40))
         
@@ -37,9 +37,9 @@ class MainGui:
         pygame.draw.rect(self.display, (155,181,204), pygame.Rect(1200, 0, 200, 788), 0)
         pygame.draw.rect(self.display, (0,0,0), pygame.Rect(1200, 0, 10, 788), 0)
         pygame.draw.rect(self.display, (0,0,0), pygame.Rect(36, 76, 1128, 488), 0)
+        self.__create_text("Blocks", 1226, 20, 40)
+        self.__create_text("Super Mario Bros - Mario Maker NES", 40, 20, 40)        
         self.map.draw()
         self.icon_select.draw()
-        self.__create_text("Blocks", 1226, 20, 40)
-        self.__create_text("Super Mario Bros - Mario Maker NES", 40, 20, 40)
         
         
