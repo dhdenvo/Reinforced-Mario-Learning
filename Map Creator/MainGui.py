@@ -8,7 +8,7 @@ class MainGui:
         icons = ["=", "-", "-", "-", "=", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
         self.icon_select = IconSelectGui(display, self, 1240, 80, 50, icons)
         self.display = display
-        self.selected_icon = pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (40, 40))
+        self.selected_icon = "-"
         
     def select(self, pos):
         self.map.select(pos)
