@@ -16,4 +16,4 @@ class ButtonGui(InteractiveGui):
         super().draw()
         font = pygame.font.Font('Fonts/SuperMario256.ttf', self.font_size)
         surface = font.render(self.text, False, self.colour)
-        self.display.blit(surface, (self.x_pos + 4, self.y_pos + 4))        
+        self.display.blit(surface, (self.x_pos + 6, self.y_pos + 6))        
