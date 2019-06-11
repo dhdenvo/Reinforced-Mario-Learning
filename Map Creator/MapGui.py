@@ -3,7 +3,7 @@ import pygame
 MAX_LENGTH = 28
 
 class MapGui:
-    def __init__(self, display, x_pos = 0, y_pos = 0, length = 40, height = 40, grid_side = 10):
+    def __init__(self, display, x_pos, y_pos, length, height, grid_side):
         self.display = display
         self.length = length
         self.height = height
