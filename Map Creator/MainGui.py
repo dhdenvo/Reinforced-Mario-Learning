@@ -5,18 +5,20 @@ from ButtonGui import ButtonGui
 
 class MainGui:
     def __init__(self, display):
-        from MapCreatorMain import create_level        
-        self.map = MapGui(display, self, 40, 80, 115, 12, 40)
+        from MapCreatorMain import create_level  
+        
         icons = ["=", "-", "-", "-", "=", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
-        self.icon_select = IconSelectGui(display, self, 1240, 80, 50, icons)
+        self.selected_icon = "-"   
         self.display = display
-        self.selected_icon = "-"
-        self.create_button = ButtonGui(display, self, 40, 670, 215, 50, "Create", create_level, (155,181,204), 50)        
+        
+        self.guis = {}
+        self.guis["map"] = MapGui(display, self, 40, 80, 115, 12, 40)
+        self.guis["icon_select"] = IconSelectGui(display, self, 1240, 80, 50, icons)
+        self.guis["create_button"] = ButtonGui(display, self, 40, 670, 215, 50, "Create", create_level, (155,181,204), 50)        
         
     def select(self, pos):
-        self.map.select(pos)
-        self.icon_select.select(pos)
-        self.create_button.select(pos)
+        for gui in self.guis.values():
+            gui.select(pos)
         
     def get_icon(self):
         return self.selected_icon
@@ -50,9 +52,8 @@ class MainGui:
         self.__create_text("Super Mario Bros - Mario Maker NES", 40, 20, 40)    
         
         #Drawing classes
-        self.map.draw()
-        self.icon_select.draw()
-        self.create_button.draw()
+        for gui in self.guis.values():
+            gui.draw()
         
         
         
