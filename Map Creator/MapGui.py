@@ -29,15 +29,6 @@ class MapGui:
             return (self.x_pos + self.grid_side * (coordinates[0] - self.scroll), self.y_pos + self.grid_side * coordinates[1])
         return (-1, -1)
     
-    def select(self, pos):
-        for real_grid_loc in self.grid:
-            grid_loc = self.__convert_coor(real_grid_loc)            
-            if grid_loc != (-1, -1) and pos[0] in range(grid_loc[0], grid_loc[0] + self.grid_side) and \
-               pos[1] in range(grid_loc[1], grid_loc[1] + self.grid_side):
-                print(real_grid_loc)
-                self.grid_positions[real_grid_loc] = self.main_gui.get_icon()
-              
-      
     def __create_blank_map(self):
         self.grid_positions = {}
         for real_grid_loc in self.grid:
@@ -45,6 +36,17 @@ class MapGui:
             if real_grid_loc[1] in (10, 11):
                 symbol = "="
             self.grid_positions[real_grid_loc] = symbol
+            
+    def get_map(self):
+        return self.grid_positions
+    
+    def select(self, pos):
+        for real_grid_loc in self.grid:
+            grid_loc = self.__convert_coor(real_grid_loc)            
+            if grid_loc != (-1, -1) and pos[0] in range(grid_loc[0], grid_loc[0] + self.grid_side) and \
+               pos[1] in range(grid_loc[1], grid_loc[1] + self.grid_side):
+                print(real_grid_loc)
+                self.grid_positions[real_grid_loc] = self.main_gui.get_icon()
             
         
     def draw(self):  
