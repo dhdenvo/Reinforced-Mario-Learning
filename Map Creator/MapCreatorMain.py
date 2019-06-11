@@ -1,6 +1,6 @@
 import pygame
 import sys
-from MapGui import MapGui
+from MainGui import MainGui
 
 pygame.init()
 display = pygame.display.set_mode((1400, 788))
@@ -11,7 +11,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 def game_loop():
-    gui = MapGui(display, 40, 80, 115, 12, 40)
+    gui = MainGui(display)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:
