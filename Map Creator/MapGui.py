@@ -1,15 +1,14 @@
 import pygame
 from InteractiveGui import InteractiveGui
 
-MAX_LENGTH = 28
-
 class MapGui(InteractiveGui):
-    def __init__(self, display, gui, x_pos, y_pos, length, height, grid_side):  
+    def __init__(self, display, gui, x_pos, y_pos, length, height, grid_side, max_length = 32):  
         super().__init__(display, gui, x_pos, y_pos)
         self.length = length
         self.height = height
         self.grid_side = grid_side
         self.scroll = 0
+        self.MAX_LENGTH = max_length
         
         self.grid = []
         for x in range(self.length):
@@ -22,7 +21,7 @@ class MapGui(InteractiveGui):
         
         
     def __convert_coor(self, coordinates):
-        if coordinates[0] < MAX_LENGTH:
+        if coordinates[0] < self.MAX_LENGTH:
             return (self.x_pos + self.grid_side * (coordinates[0] - self.scroll), self.y_pos + self.grid_side * coordinates[1])
         return (-1, -1)
     
@@ -30,7 +29,7 @@ class MapGui(InteractiveGui):
         self.grid_positions = {}
         for real_grid_loc in self.grid:
             symbol = "-"
-            if real_grid_loc[1] in (10, 11):
+            if real_grid_loc[1] in (12, 13):
                 symbol = "="
             self.grid_positions[real_grid_loc] = symbol
             

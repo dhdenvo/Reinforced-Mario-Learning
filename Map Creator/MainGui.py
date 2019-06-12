@@ -14,11 +14,11 @@ class MainGui:
         self.display = display
         
         self.guis = {}
-        self.guis["map"] = MapGui(display, self, 40, 80, 115, 12, 40)
+        self.guis["map"] = MapGui(display, self, 40, 80, 115, 14, 35)
         self.guis["icon_select"] = IconSelectGui(display, self, 1240, 80, 50, icons)
-        self.guis["create_button"] = ButtonGui(display, self, 40, 670, 215, 50, "Create", create_level, (155,181,204), 50)  
-        self.guis["left_button"] = ButtonGui(display, self, 40, 580, 64, 64, "<", move_left, (155,181,204), 64)
-        self.guis["right_button"] = ButtonGui(display, self, 1100, 580, 64, 64, ">", move_right, (155,181,204), 64)        
+        self.guis["create_button"] = ButtonGui(display, self, 40, 680, 215, 50, "Create", create_level, (155,181,204), 50)  
+        self.guis["left_button"] = ButtonGui(display, self, 40, 590, 64, 64, "<", move_left, (155,181,204), 64)
+        self.guis["right_button"] = ButtonGui(display, self, 1100, 590, 64, 64, ">", move_right, (155,181,204), 64)        
         
     def select(self, pos):
         for gui in self.guis.values():
@@ -39,7 +39,7 @@ class MainGui:
         self.display.blit(surface, (x, y))
     
     def draw(self):
-        #Decorative Stuff (Mario Image and Floor
+        #Decorative Stuff (Mario Image and Floor)
         self.display.blit(pygame.transform.scale(pygame.image.load('./DecorativeImage.jpg'), (337, 211)), (650, 584))        
         x = 0
         while x < 1200:
@@ -49,7 +49,7 @@ class MainGui:
         #Basic Rectangles For Visuals and Separation
         pygame.draw.rect(self.display, (155,181,204), pygame.Rect(1200, 0, 200, 788), 0)
         pygame.draw.rect(self.display, (0,0,0), pygame.Rect(1200, 0, 10, 788), 0)
-        pygame.draw.rect(self.display, (0,0,0), pygame.Rect(36, 76, 1128, 488), 0)
+        pygame.draw.rect(self.display, (0,0,0), pygame.Rect(36, 76, 1128, 498), 0)
         
         #Headers
         self.__create_text("Blocks", 1226, 20, 40)
