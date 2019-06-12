@@ -16,7 +16,10 @@ class IconSelectGui(InteractiveGui):
                 self.grid.append((x, y))  
                 
         self.SYMBOL_TRANSLATION = {"=": pygame.transform.scale(pygame.image.load('./Blocks/Floor.png'), (grid_side, grid_side)), \
-                                   "-": pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (grid_side, grid_side))}           
+                                   "-": pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (grid_side, grid_side)), \
+                                   "B": pygame.transform.scale(pygame.image.load('./Blocks/Brick.png'), (grid_side, grid_side)),\
+                                   "G": pygame.transform.scale(pygame.image.load('./Blocks/Goomba.png'), (grid_side, grid_side)),\
+                                   "?": pygame.transform.scale(pygame.image.load('./Blocks/Question.png'), (grid_side, grid_side))}           
         
         
     def __convert_coor(self, coordinates):
