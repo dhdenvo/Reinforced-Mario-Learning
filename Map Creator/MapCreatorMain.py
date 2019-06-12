@@ -9,8 +9,17 @@ pygame.display.set_caption('Mario World Creator')
 
 clock = pygame.time.Clock()
 
-def create_level():
+def create_level(gui):
     print("Hello There")
+    
+def move_map(gui, direction):
+    print(direction)
+    
+def move_left(gui):
+    move_map(gui, -1)
+    
+def move_right(gui):
+    move_map(gui, 1)
 
 def game_loop():
     gui = MainGui(display)

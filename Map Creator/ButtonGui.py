@@ -10,7 +10,7 @@ class ButtonGui(InteractiveGui):
         
     def select(self, pos):
         if super().select(pos):
-            self.push_function()
+            self.push_function(self.main_gui)
             
     def draw(self):
         super().draw()
