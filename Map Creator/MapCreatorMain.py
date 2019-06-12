@@ -13,7 +13,7 @@ def create_level(gui):
     print("Hello There")
     
 def move_map(gui, direction):
-    print(direction)
+    gui.scroll(direction)
     
 def move_left(gui):
     move_map(gui, -1)

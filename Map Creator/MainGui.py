@@ -31,7 +31,10 @@ class MainGui:
         self.selected_icon = icon
         
     def get_map(self):
-        return self.map.get_map
+        return self.guis["map"].get_map()
+    
+    def scroll(self, direction):
+        self.guis["map"].scroll_grid(direction)
     
     def __create_text(self, text, x, y, size):
         font = pygame.font.Font('Fonts/SuperMario256.ttf', size)

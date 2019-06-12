@@ -21,7 +21,9 @@ class MapGui(InteractiveGui):
         
         
     def __convert_coor(self, coordinates):
-        if coordinates[0] < self.MAX_LENGTH:
+        if coordinates[0] - self.scroll in range(self.MAX_LENGTH):
+            if coordinates == (0,0):
+                print("HELP")
             return (self.x_pos + self.grid_side * (coordinates[0] - self.scroll), self.y_pos + self.grid_side * coordinates[1])
         return (-1, -1)
     
@@ -35,6 +37,10 @@ class MapGui(InteractiveGui):
             
     def get_map(self):
         return self.grid_positions
+    
+    def scroll_grid(self, direction):
+        if (self.scroll + direction) in range(abs(self.length - self.MAX_LENGTH)):
+            self.scroll += direction
     
     def select(self, pos):
         for real_grid_loc in self.grid:
