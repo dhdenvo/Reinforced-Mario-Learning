@@ -13,8 +13,11 @@ class MainGui:
         self.selected_icon = "-"   
         self.display = display
         
+        self.map_height = 14
+        self.map_length = 115
+        
         self.guis = {}
-        self.guis["map"] = MapGui(display, self, 40, 80, 115, 14, 35)
+        self.guis["map"] = MapGui(display, self, 40, 80, self.map_length, self.map_height, 35)
         self.guis["icon_select"] = IconSelectGui(display, self, 1240, 80, 50, icons)
         self.guis["create_button"] = ButtonGui(display, self, 40, 680, 215, 50, "Create", create_level, (155,181,204), 50)  
         self.guis["left_button"] = ButtonGui(display, self, 40, 590, 64, 64, "<", move_left, (155,181,204), 64)
@@ -32,6 +35,9 @@ class MainGui:
         
     def get_map(self):
         return self.guis["map"].get_map()
+    
+    def get_map_measurements(self):
+        return (self.map_length, self.map_height)
     
     def scroll(self, direction):
         self.guis["map"].scroll_grid(direction)

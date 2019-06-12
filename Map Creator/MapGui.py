@@ -22,8 +22,6 @@ class MapGui(InteractiveGui):
         
     def __convert_coor(self, coordinates):
         if coordinates[0] - self.scroll in range(self.MAX_LENGTH):
-            if coordinates == (0,0):
-                print("HELP")
             return (self.x_pos + self.grid_side * (coordinates[0] - self.scroll), self.y_pos + self.grid_side * coordinates[1])
         return (-1, -1)
     

@@ -10,7 +10,19 @@ pygame.display.set_caption('Mario World Creator')
 clock = pygame.time.Clock()
 
 def create_level(gui):
-    print("Hello There")
+    map = gui.get_map()
+    measurement = gui.get_map_measurements()
+    map_representation = []
+    for y in range(measurement[1]):
+        map_representation.append(["-"] * measurement[0])
+        for x in range(measurement[0]):
+            map_representation[y][x] = map.get((x, y), "-")
+        map_representation[y] = "".join(map_representation[y])
+    map_representation = "\n".join(map_representation)
+    
+    f = open("map.txt", "w")
+    f.write(map_representation)
+    f.close()
     
 def move_map(gui, direction):
     gui.scroll(direction)
