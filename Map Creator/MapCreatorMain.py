@@ -16,7 +16,7 @@ def create_level(gui):
     for y in range(measurement[1]):
         map_representation.append(["-"] * measurement[0])
         for x in range(measurement[0]):
-            map_representation[y][x] = map.get((x, y), "-")
+            map_representation[y][x] = map.get((x, y), "-")[0]
         map_representation[y] = "".join(map_representation[y])
     map_representation = "\n".join(map_representation)
     

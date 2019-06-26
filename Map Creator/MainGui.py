@@ -9,12 +9,12 @@ class MainGui:
         from MapCreatorMain import move_left
         from MapCreatorMain import move_right
         
-        icons = ["=", "-", "B", "G", "?", "-", "-", "=", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
+        icons = ["=", "-", "B", "G", "?", "F", "-", "=", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
         self.selected_icon = "-"   
         self.display = display
         
         self.map_height = 14
-        self.map_length = 115
+        self.map_length = 200
         
         self.guis = {}
         self.guis["map"] = MapGui(display, self, 40, 80, self.map_length, self.map_height, 35)

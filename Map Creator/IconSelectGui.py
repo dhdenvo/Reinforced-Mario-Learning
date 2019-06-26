@@ -19,7 +19,10 @@ class IconSelectGui(InteractiveGui):
                                    "-": pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (grid_side, grid_side)), \
                                    "B": pygame.transform.scale(pygame.image.load('./Blocks/Brick.png'), (grid_side, grid_side)),\
                                    "G": pygame.transform.scale(pygame.image.load('./Blocks/Goomba.png'), (grid_side, grid_side)),\
-                                   "?": pygame.transform.scale(pygame.image.load('./Blocks/Question.png'), (grid_side, grid_side))}           
+                                   "?": pygame.transform.scale(pygame.image.load('./Blocks/Question.png'), (grid_side, grid_side)),\
+                                   "F": pygame.transform.scale(pygame.image.load('./Blocks/Flag.png'), (grid_side, grid_side)),\
+                                   "T": pygame.transform.scale(pygame.image.load('./Blocks/Flag Terminus.png'), (grid_side, grid_side)),\
+                                   "W": pygame.transform.scale(pygame.image.load('./Blocks/Wall.png'), (grid_side, grid_side))}           
         
         
     def __convert_coor(self, coordinates):
