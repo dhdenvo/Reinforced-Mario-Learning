@@ -2,6 +2,7 @@ import pygame
 from InteractiveGui import InteractiveGui
 from Icon import Icon
 from MultiIcon import MultiIcon
+import sys
 
 class MapGui(InteractiveGui):
     def __init__(self, display, gui, x_pos, y_pos, length, height, grid_side, max_length = 32):  
@@ -11,6 +12,7 @@ class MapGui(InteractiveGui):
         self.grid_side = grid_side
         self.scroll = 0
         self.MAX_LENGTH = max_length
+        self.images = {}
         
         self.grid = []
         for x in range(self.length):
@@ -18,17 +20,7 @@ class MapGui(InteractiveGui):
                 self.grid.append((x, y))
                 
         self.__create_blank_map()
-        self.SYMBOL_TRANSLATION = {"=": pygame.transform.scale(pygame.image.load('./Blocks/Floor.png'), (grid_side, grid_side)), \
-                                   "-": pygame.transform.scale(pygame.image.load('./Blocks/Sky.png'), (grid_side, grid_side)), \
-                                   "B": pygame.transform.scale(pygame.image.load('./Blocks/Brick.png'), (grid_side, grid_side)),\
-                                   "G": pygame.transform.scale(pygame.image.load('./Blocks/Goomba.png'), (grid_side, grid_side)),\
-                                   "?": pygame.transform.scale(pygame.image.load('./Blocks/Question.png'), (grid_side, grid_side)),\
-                                   "FOne": pygame.transform.scale(pygame.image.load('./Blocks/Flag Ball.png'), (grid_side, grid_side)),\
-                                   "FTwo": pygame.transform.scale(pygame.image.load('./Blocks/Flag Edge.png'), (grid_side, grid_side)),\
-                                   "FThree": pygame.transform.scale(pygame.image.load('./Blocks/Flag Main.png'), (grid_side, grid_side)),\
-                                   "T": pygame.transform.scale(pygame.image.load('./Blocks/Flag Terminus.png'), (grid_side, grid_side)),\
-                                   "W": pygame.transform.scale(pygame.image.load('./Blocks/Wall.png'), (grid_side, grid_side))}       
-        
+        q = self.grid_positions[(0,0)]      
         
     def __convert_coor(self, coordinates):
         if coordinates[0] - self.scroll in range(self.MAX_LENGTH):
@@ -39,8 +31,10 @@ class MapGui(InteractiveGui):
         self.grid_positions = {}
         for real_grid_loc in self.grid:
             symbol = "-"
+            file_name = "Sky"
             if real_grid_loc[1] in (12, 13):
                 symbol = "="
+                file_name = "Floor"
             self.grid_positions[real_grid_loc] = Icon(real_grid_loc[0], real_grid_loc[1], symbol)
             
     def get_map(self):
@@ -49,6 +43,9 @@ class MapGui(InteractiveGui):
     def scroll_grid(self, direction):
         if (self.scroll + direction) in range(abs(self.length - self.MAX_LENGTH)):
             self.scroll += direction
+            
+    def get_image(self, file):
+        return self.images.setdefault(file, pygame.transform.scale(pygame.image.load('./Blocks/' + file + ".png"), (self.grid_side, self.grid_side)))
     
     def __add_flag(self, x_pos, add = True):
         icon = '-'
@@ -63,13 +60,22 @@ class MapGui(InteractiveGui):
             self.grid_positions[(x_pos, y_pos)] = icon   
         if add: icon = 'W'
         self.grid_positions[(x_pos, 11)] = icon
+        
+        
     
     def add_icon(self, real_grid_loc):
         if self.main_gui.get_icon() in ["F"]:
-            icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], "FOne", [(0,-1), (0,1)]) 
+            icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], None, None, \
+                             [[0, 1, "F", "Flag Ball"], [0, 2, "F", "Flag Main"], [-1, 2, "F", "Flag Edge"], \
+                              [0, list(range(3, 11)), "T", "Flag Terminus"], [0, 11, "W", "Wall"]], (True, False)) 
         else:
             icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())
-        if self.grid_positions[real_grid_loc].remove(self.grid_positions): icon.create(self.grid_positions)
+        check = True
+        for coor in icon.get_coordinates():
+            if not self.grid_positions[tuple(coor)].remove(self.grid_positions): 
+                check = False
+        if check: icon.create(self.grid_positions)
+            
         
     
     def select(self, pos):
@@ -86,7 +92,10 @@ class MapGui(InteractiveGui):
             grid_loc = self.__convert_coor(real_grid_loc)
             if grid_loc != (-1, -1):
                 try:
-                    self.display.blit(self.SYMBOL_TRANSLATION.get(self.grid_positions.get(real_grid_loc).get_icon_string()), grid_loc)
+                    icon_image = self.grid_positions.get(real_grid_loc).get_icon_image()
+                    if type(icon_image) == str:
+                        icon_image = self.get_image(icon_image)
+                    self.display.blit(icon_image, grid_loc)
                     rect = pygame.Rect(grid_loc[0], grid_loc[1], self.grid_side, self.grid_side)
                     pygame.draw.rect(self.display, (0,0,0), rect, 2)
                 except TypeError:
