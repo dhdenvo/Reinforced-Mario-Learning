@@ -1,5 +1,6 @@
 import pygame
 import sys
+import gc
 from MainGui import MainGui
 
 pygame.init()
@@ -16,7 +17,7 @@ def create_level(gui):
     for y in range(measurement[1]):
         map_representation.append(["-"] * measurement[0])
         for x in range(measurement[0]):
-            map_representation[y][x] = map.get((x, y), "-")[0]
+            map_representation[y][x] = map.get((x, y), "-")[0].get_icon_string()
         map_representation[y] = "".join(map_representation[y])
     map_representation = "\n".join(map_representation)
     
@@ -47,6 +48,7 @@ def game_loop():
         display.fill((182,213,251))
         gui.draw()
         pygame.display.update()
+        gc.collect()        
         clock.tick(60)
 
 game_loop()

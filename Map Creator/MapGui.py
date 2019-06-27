@@ -1,5 +1,7 @@
 import pygame
 from InteractiveGui import InteractiveGui
+from Icon import Icon
+from MultiIcon import MultiIcon
 
 class MapGui(InteractiveGui):
     def __init__(self, display, gui, x_pos, y_pos, length, height, grid_side, max_length = 32):  
@@ -39,7 +41,7 @@ class MapGui(InteractiveGui):
             symbol = "-"
             if real_grid_loc[1] in (12, 13):
                 symbol = "="
-            self.grid_positions[real_grid_loc] = symbol
+            self.grid_positions[real_grid_loc] = Icon(real_grid_loc[0], real_grid_loc[1], symbol)
             
     def get_map(self):
         return self.grid_positions
@@ -48,34 +50,26 @@ class MapGui(InteractiveGui):
         if (self.scroll + direction) in range(abs(self.length - self.MAX_LENGTH)):
             self.scroll += direction
     
-    def __set_flag(self, x_pos, flag = True):
+    def __add_flag(self, x_pos, add = True):
         icon = '-'
-        if flag: icon = 'FOne'
+        if add: icon = 'FOne'
         self.grid_positions[(x_pos, 1)] = icon
-        if flag: icon = 'FThree'        
+        if add: icon = 'FThree'        
         self.grid_positions[(x_pos, 2)] = icon
-        if flag: icon = 'FTwo'        
+        if add: icon = 'FTwo'        
         self.grid_positions[(x_pos - 1, 2)] = icon
-        if flag: icon = 'T'
+        if add: icon = 'T'
         for y_pos in range(3, 11):
             self.grid_positions[(x_pos, y_pos)] = icon   
-        if flag: icon = 'W'
+        if add: icon = 'W'
         self.grid_positions[(x_pos, 11)] = icon
-        
     
     def add_icon(self, real_grid_loc):
-        if (self.grid_positions[real_grid_loc][0] == 'F' or self.grid_positions[real_grid_loc] == 'T' or \
-            self.grid_positions.get((real_grid_loc[0], real_grid_loc[1] - 1), '-') == 'T') and real_grid_loc[0] > 10:
-            if self.grid_positions[real_grid_loc] == 'FTwo':
-                print("HI")
-                self.__set_flag(real_grid_loc[0] + 1, False)
-            else:
-                self.__set_flag(real_grid_loc[0], False)
-        if self.main_gui.get_icon() == 'F':
-            if real_grid_loc[0] > 10:
-                self.__set_flag(real_grid_loc[0])
+        if self.main_gui.get_icon() in ["F"]:
+            icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], "FOne", [(0,-1), (0,1)]) 
         else:
-            self.grid_positions[real_grid_loc] = self.main_gui.get_icon()
+            icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())
+        if self.grid_positions[real_grid_loc].remove(self.grid_positions): icon.create(self.grid_positions)
         
     
     def select(self, pos):
@@ -92,7 +86,7 @@ class MapGui(InteractiveGui):
             grid_loc = self.__convert_coor(real_grid_loc)
             if grid_loc != (-1, -1):
                 try:
-                    self.display.blit(self.SYMBOL_TRANSLATION.get(self.grid_positions.get(real_grid_loc, "-")), grid_loc)
+                    self.display.blit(self.SYMBOL_TRANSLATION.get(self.grid_positions.get(real_grid_loc).get_icon_string()), grid_loc)
                     rect = pygame.Rect(grid_loc[0], grid_loc[1], self.grid_side, self.grid_side)
                     pygame.draw.rect(self.display, (0,0,0), rect, 2)
                 except TypeError:
