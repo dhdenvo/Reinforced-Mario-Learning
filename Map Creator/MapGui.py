@@ -13,6 +13,7 @@ class MapGui(InteractiveGui):
         self.scroll = 0
         self.MAX_LENGTH = max_length
         self.images = {}
+        self.flag = None
         
         self.grid = []
         for x in range(self.length):
@@ -70,13 +71,15 @@ class MapGui(InteractiveGui):
                               [0, list(range(3, 11)), "T", "Flag Terminus"], [0, 11, "W", "Wall"]], (True, False)) 
         else:
             icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())
+        if self.main_gui.get_icon() == "F":
+            if self.flag: self.flag.remove(self.grid_positions)
+            self.flag = icon        
         check = True
         for coor in icon.get_coordinates():
             if not self.grid_positions[tuple(coor)].remove(self.grid_positions): 
                 check = False
         if check: icon.create(self.grid_positions)
-            
-        
+
     
     def select(self, pos):
         for real_grid_loc in self.grid:
