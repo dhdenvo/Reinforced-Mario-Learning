@@ -39,7 +39,7 @@ class MultiIcon(Icon):
         return coordinates
     
     def create(self, grid_position):
-        grid_position[(self.x_pos, self.y_pos)] = self
+        if self.relative == (True, True): grid_position[(self.x_pos, self.y_pos)] = self
         through_relatives = self.go_through_relatives()
         for rel_pos in through_relatives:
             if self.relative[0]:
