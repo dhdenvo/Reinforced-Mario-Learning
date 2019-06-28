@@ -57,22 +57,23 @@ class MapGui(InteractiveGui):
         if self.main_gui.get_icon() in ["F", "P"]:
             icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], None, None, self.MULTIICONS.get(self.main_gui.get_icon())[0], self.MULTIICONS.get(self.main_gui.get_icon())[1]) 
         else:
-            icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())
-        if self.main_gui.get_icon() == "F":
-            if self.flag: self.flag.remove(self.grid_positions)
-            self.flag = icon        
+            icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())      
         check = True
         for coor in icon.get_coordinates():
-            if not self.grid_positions[tuple(coor)].remove(self.grid_positions): 
+            if self.grid_positions[tuple(coor)].get_icon_string() == "M" or not self.grid_positions[tuple(coor)].remove(self.grid_positions): 
                 check = False
-        if check: icon.create(self.grid_positions)
+        if check: 
+            if self.main_gui.get_icon() == "F":
+                if self.flag: self.flag.remove(self.grid_positions)
+                self.flag = icon              
+            icon.create(self.grid_positions)
 
     
     def select(self, pos):
         for real_grid_loc in self.grid:
             grid_loc = self.__convert_coor(real_grid_loc)    
             button = InteractiveGui(None, None, grid_loc[0], grid_loc[1], self.grid_side, self.grid_side)
-            if button.select(pos) and self.grid_positions[real_grid_loc].get_icon_string() != "M":
+            if button.select(pos):
                 print(real_grid_loc)
                 self.add_icon(real_grid_loc)
 
