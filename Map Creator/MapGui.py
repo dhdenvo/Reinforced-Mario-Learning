@@ -14,6 +14,9 @@ class MapGui(InteractiveGui):
         self.MAX_LENGTH = max_length
         self.images = {}
         self.flag = None
+        self.MULTIICONS = {"F": [[[0, 1, "F", "Flag Ball"], [0, 2, "F", "Flag Main"], [-1, 2, "F", "Flag Edge"], \
+                                  [0, list(range(3, 11)), "T", "Flag Terminus"], [0, 11, "W", "Wall"]], (True, False)], 
+                           "P": [[[0, 0, "P", "Pipe (2)"], [1, 0, "P", "Pipe (3)"], [0, "11", "P", "Pipe (4)"], [1, "11", "P", "Pipe (1)"]], (True, True)]}
         
         self.grid = []
         for x in range(self.length):
@@ -48,27 +51,9 @@ class MapGui(InteractiveGui):
     def get_image(self, file):
         return self.images.setdefault(file, pygame.transform.scale(pygame.image.load('./Blocks/' + file + ".png"), (self.grid_side, self.grid_side)))
     
-    def __add_flag(self, x_pos, add = True):
-        icon = '-'
-        if add: icon = 'FOne'
-        self.grid_positions[(x_pos, 1)] = icon
-        if add: icon = 'FThree'        
-        self.grid_positions[(x_pos, 2)] = icon
-        if add: icon = 'FTwo'        
-        self.grid_positions[(x_pos - 1, 2)] = icon
-        if add: icon = 'T'
-        for y_pos in range(3, 11):
-            self.grid_positions[(x_pos, y_pos)] = icon   
-        if add: icon = 'W'
-        self.grid_positions[(x_pos, 11)] = icon
-        
-        
-    
     def add_icon(self, real_grid_loc):
-        if self.main_gui.get_icon() in ["F"]:
-            icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], None, None, \
-                             [[0, 1, "F", "Flag Ball"], [0, 2, "F", "Flag Main"], [-1, 2, "F", "Flag Edge"], \
-                              [0, list(range(3, 11)), "T", "Flag Terminus"], [0, 11, "W", "Wall"]], (True, False)) 
+        if self.main_gui.get_icon() in ["F", "P"]:
+            icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], None, None, self.MULTIICONS.get(self.main_gui.get_icon())[0], self.MULTIICONS.get(self.main_gui.get_icon())[1]) 
         else:
             icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())
         if self.main_gui.get_icon() == "F":

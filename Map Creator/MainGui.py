@@ -9,7 +9,7 @@ class MainGui:
         from MapCreatorMain import move_left
         from MapCreatorMain import move_right
         
-        icons = ["=", "-", "B", "G", "?", "F", "-", "=", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
+        icons = ["=", "-", "B", "G", "?", "F", "P", "=", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
         self.selected_icon = "-"   
         self.display = display
         

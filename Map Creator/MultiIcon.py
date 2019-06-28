@@ -80,6 +80,9 @@ class MultiIcon(Icon):
             elif type(pos[1]) == list:
                 for y_pos in pos[1]:
                     list_of_positions.append([pos[0], y_pos, pos[2], pos[3]])
+            elif type(pos[1]) == str:
+                for y_pos in range(self.y_pos + 1, int(pos[1]) + 1):
+                    list_of_positions.append([pos[0], y_pos - self.y_pos, pos[2], pos[3]])
             else:
                 list_of_positions.append(pos[:])
         return list_of_positions

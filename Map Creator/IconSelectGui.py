@@ -22,7 +22,8 @@ class IconSelectGui(InteractiveGui):
                                    "?": pygame.transform.scale(pygame.image.load('./Blocks/Question.png'), (grid_side, grid_side)),\
                                    "F": pygame.transform.scale(pygame.image.load('./Blocks/Flag.png'), (grid_side, grid_side)),\
                                    "T": pygame.transform.scale(pygame.image.load('./Blocks/Flag Terminus.png'), (grid_side, grid_side)),\
-                                   "W": pygame.transform.scale(pygame.image.load('./Blocks/Wall.png'), (grid_side, grid_side))}           
+                                   "W": pygame.transform.scale(pygame.image.load('./Blocks/Wall.png'), (grid_side, grid_side)), \
+                                   "P": pygame.transform.scale(pygame.image.load('./Blocks/Pipe.png'), (grid_side, grid_side))}           
         
         
     def __convert_coor(self, coordinates):
