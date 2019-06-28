@@ -65,6 +65,11 @@ class MapGui(InteractiveGui):
     def add_icon(self, real_grid_loc):
         if self.main_gui.get_icon() in self.MULTIICONS.keys():
             icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], None, None, self.MULTIICONS.get(self.main_gui.get_icon())[0], self.MULTIICONS.get(self.main_gui.get_icon())[1]) 
+        elif self.main_gui.get_icon() == "~":
+            if real_grid_loc[1] >= 12:
+                icon = Icon(real_grid_loc[0], real_grid_loc[1], "=")
+            else:
+                icon = Icon(real_grid_loc[0], real_grid_loc[1], "-")
         else:
             icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())      
         check = True
@@ -74,7 +79,7 @@ class MapGui(InteractiveGui):
             if self.grid_positions[tuple(coor)].get_icon_string() == "M" or \
                not self.grid_positions[tuple(coor)].remove(self.grid_positions): 
                 check = False
-        if (icon.get_icon_string != "-" or icon.get_icon_string != "~") and real_grid_loc[1] >= 12:
+        if (self.main_gui.get_icon() != "-" and self.main_gui.get_icon() != "~") and real_grid_loc[1] >= 12:
             check = False
         if check: 
             if self.main_gui.get_icon() == "F":
