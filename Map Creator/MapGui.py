@@ -39,6 +39,8 @@ class MapGui(InteractiveGui):
             if real_grid_loc[1] in (12, 13):
                 symbol = "="
                 file_name = "Floor"
+            if real_grid_loc == (4, 11):
+                symbol = "M"
             self.grid_positions[real_grid_loc] = Icon(real_grid_loc[0], real_grid_loc[1], symbol)
             
     def get_map(self):
@@ -70,7 +72,7 @@ class MapGui(InteractiveGui):
         for real_grid_loc in self.grid:
             grid_loc = self.__convert_coor(real_grid_loc)    
             button = InteractiveGui(None, None, grid_loc[0], grid_loc[1], self.grid_side, self.grid_side)
-            if button.select(pos):
+            if button.select(pos) and self.grid_positions[real_grid_loc].get_icon_string() != "M":
                 print(real_grid_loc)
                 self.add_icon(real_grid_loc)
 

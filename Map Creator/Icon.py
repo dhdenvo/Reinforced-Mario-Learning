@@ -6,11 +6,8 @@ SYMBOL_TRANSLATION = {"=": pygame.transform.scale(pygame.image.load('./Blocks/Fl
                            "B": pygame.transform.scale(pygame.image.load('./Blocks/Brick.png'), (grid_side, grid_side)),\
                            "G": pygame.transform.scale(pygame.image.load('./Blocks/Goomba.png'), (grid_side, grid_side)),\
                            "?": pygame.transform.scale(pygame.image.load('./Blocks/Question.png'), (grid_side, grid_side)),\
-                           "FOne": pygame.transform.scale(pygame.image.load('./Blocks/Flag Ball.png'), (grid_side, grid_side)),\
-                           "FTwo": pygame.transform.scale(pygame.image.load('./Blocks/Flag Edge.png'), (grid_side, grid_side)),\
-                           "FThree": pygame.transform.scale(pygame.image.load('./Blocks/Flag Main.png'), (grid_side, grid_side)),\
-                           "T": pygame.transform.scale(pygame.image.load('./Blocks/Flag Terminus.png'), (grid_side, grid_side)),\
-                           "W": pygame.transform.scale(pygame.image.load('./Blocks/Wall.png'), (grid_side, grid_side))}     
+                           "W": pygame.transform.scale(pygame.image.load('./Blocks/Wall.png'), (grid_side, grid_side)), \
+                           "M": pygame.transform.scale(pygame.image.load('./Blocks/Mario.png'), (grid_side, grid_side))}     
 
 class Icon:
     def __init__(self, x_pos, y_pos, icon_string, image_icon = None):
