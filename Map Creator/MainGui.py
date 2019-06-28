@@ -3,6 +3,14 @@ from MapGui import MapGui
 from IconSelectGui import IconSelectGui
 from ButtonGui import ButtonGui
 
+grid_side = 50
+def get_image(file):
+    return pygame.transform.scale(pygame.image.load('./Blocks/' + file + ".png"), (grid_side, grid_side))
+
+SYMBOL_TRANSLATION = {"=": get_image("Floor"), "-": get_image("Sky"), "B": get_image("Brick"),"G": get_image("Goomba"),\
+                           "?": get_image("Question"), "W": get_image("Wall"), "M": get_image("Mario"), "<": get_image("Bullet"), \
+                           "P": get_image("Pipe"), "F": get_image("Flag")}
+
 class MainGui:
     def __init__(self, display):
         from MapCreatorMain import create_level  
