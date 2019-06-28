@@ -7,9 +7,12 @@ grid_side = 50
 def get_image(file):
     return pygame.transform.scale(pygame.image.load('./Blocks/' + file + ".png"), (grid_side, grid_side))
 
-SYMBOL_TRANSLATION = {"=": get_image("Floor"), "-": get_image("Sky"), "B": get_image("Brick"),"G": get_image("Goomba"),\
+SYMBOL_TRANSLATION = {"=": get_image("Floor"), "-": get_image("Sky"), "B": get_image("Brick"), "G": get_image("Goomba"),\
                            "?": get_image("Question"), "W": get_image("Wall"), "M": get_image("Mario"), "<": get_image("Bullet"), \
-                           "P": get_image("Pipe"), "F": get_image("Flag")}
+                           "P": get_image("Pipe"), "F": get_image("Flag"), "C": get_image("Coin"), "E": get_image("Buzzy Beetle"), \
+                           "X": get_image("Spiny"), "K": get_image("Koopa"), "H": get_image("Hammer Bro"), "^": get_image("Spring Head"), \
+                           "S": get_image("Star"), "R": get_image("Mushroom"), "U": get_image("1Up Mushroom"), \
+                           "Y": get_image("Piranha"), "~": get_image("Eraser")}
 
 class MainGui:
     def __init__(self, display):
@@ -17,7 +20,7 @@ class MainGui:
         from MapCreatorMain import move_left
         from MapCreatorMain import move_right
         
-        icons = ["=", "-", "B", "G", "?", "F", "P", "=", "-", "-", "-", "-", "-", "-", "-", "-", "=", "-"]
+        icons = ["-", "B", "P", "G", "?", "U", "^", "Y", "F", "S", "C", "<", "E", "X", "R", "H", "K", "~"]
         self.selected_icon = "-"   
         self.display = display
         

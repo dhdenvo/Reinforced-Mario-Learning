@@ -16,7 +16,16 @@ class MapGui(InteractiveGui):
         self.flag = None
         self.MULTIICONS = {"F": [[[0, 1, "F", "Flag Ball"], [0, 2, "F", "Flag Main"], [-1, 2, "F", "Flag Edge"], \
                                   [0, list(range(3, 11)), "T", "Flag Terminus"], [0, 11, "W", "Wall"]], (True, False)], 
-                           "P": [[[0, 0, "P", "Pipe (2)"], [1, 0, "P", "Pipe (3)"], [0, "11", "P", "Pipe (4)"], [1, "11", "P", "Pipe (1)"]], (True, True)]}
+                           "P": [[[0, 0, "P", "Pipe (2)"], [1, 0, "P", "Pipe (3)"], [0, "11", "P", "Pipe (4)"], [1, "11", "P", "Pipe (1)"]], (True, True)], 
+                           "H": [[[0, -1, "H", "Hammer Bro Head"], [0, 0, "H", "Hammer Bro Body"]], (True, True)], \
+                           "K": [[[0, -1, "K", "Koopa Head"], [0, 0, "K", "Koopa Body"]], (True, True)], \
+                           "^": [[[0, -1, "^", "Spring Head"], [0, 0, "^", "Spring Body"]], (True, True)], \
+                           "R": [[[0, -1, "R", "Mushroom"], [0, 0, "B", "Brick"]], (True, True)], \
+                           "S": [[[0, -1, "S", "Star"], [0, 0, "B", "Brick"]], (True, True)], \
+                           "U": [[[0, -1, "U", "1Up Mushroom"], [0, 0, "B", "Brick"]], (True, True)], \
+                           "Y": [[[0, -2, "Y", "Piranha TL"], [1, -2, "Y", "Piranha TR"], [0, -1, "Y", "Piranha BL"], \
+                                  [1, -1, "Y", "Piranha BR"], [0, 0, "P", "Pipe (2)"], [1, 0, "P", "Pipe (3)"], \
+                                  [0, "11", "P", "Pipe (4)"], [1, "11", "P", "Pipe (1)"]], (True, True)]}
         
         self.grid = []
         for x in range(self.length):
@@ -54,7 +63,7 @@ class MapGui(InteractiveGui):
         return self.images.setdefault(file, pygame.transform.scale(pygame.image.load('./Blocks/' + file + ".png"), (self.grid_side, self.grid_side)))
     
     def add_icon(self, real_grid_loc):
-        if self.main_gui.get_icon() in ["F", "P"]:
+        if self.main_gui.get_icon() in self.MULTIICONS.keys():
             icon = MultiIcon(real_grid_loc[0], real_grid_loc[1], None, None, self.MULTIICONS.get(self.main_gui.get_icon())[0], self.MULTIICONS.get(self.main_gui.get_icon())[1]) 
         else:
             icon = Icon(real_grid_loc[0], real_grid_loc[1], self.main_gui.get_icon())      
@@ -64,7 +73,9 @@ class MapGui(InteractiveGui):
                 self.flag = None            
             if self.grid_positions[tuple(coor)].get_icon_string() == "M" or \
                not self.grid_positions[tuple(coor)].remove(self.grid_positions): 
-                check = False          
+                check = False
+        if (icon.get_icon_string != "-" or icon.get_icon_string != "~") and real_grid_loc[1] >= 12:
+            check = False
         if check: 
             if self.main_gui.get_icon() == "F":
                 if self.flag: self.flag.remove(self.grid_positions)
