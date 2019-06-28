@@ -16,6 +16,9 @@ class InteractiveGui:
            and pos[1] in range(self.y_pos, self.y_pos + self.height):
             return True
         
+    def release(self, pos):
+        return self.select(pos)
+        
     def draw(self):
         pygame.draw.rect(self.display, self.background_colour, pygame.Rect(self.x_pos, self.y_pos, self.length, self.height))        
         pygame.draw.rect(self.display, self.colour, pygame.Rect(self.x_pos, self.y_pos, self.length, self.height), 4)

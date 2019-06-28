@@ -17,7 +17,7 @@ def create_level(gui):
     for y in range(measurement[1]):
         map_representation.append(["-"] * measurement[0])
         for x in range(measurement[0]):
-            map_representation[y][x] = map.get((x, y), "-")[0].get_icon_string()
+            map_representation[y][x] = map.get((x, y)).get_icon_string()
         map_representation[y] = "".join(map_representation[y])
     map_representation = "\n".join(map_representation)
     
@@ -38,10 +38,12 @@ def game_loop():
     gui = MainGui(display)
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 gui.select(pos)
-                
+            elif event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                gui.release(pos)
             elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()     

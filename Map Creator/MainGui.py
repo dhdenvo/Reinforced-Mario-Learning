@@ -26,7 +26,11 @@ class MainGui:
     def select(self, pos):
         for gui in self.guis.values():
             gui.select(pos)
-        
+    
+    def release(self, pos):
+        for gui in self.guis.values():
+            gui.release(pos)
+    
     def get_icon(self):
         return self.selected_icon
     
