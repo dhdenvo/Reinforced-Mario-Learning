@@ -11,13 +11,16 @@ class InteractiveGui:
         self.background_colour = background_colour
         self.colour = colour
         
-    def select(self, pos):
+    def __in_gui(self, pos):
         if (self.x_pos, self.y_pos) != (-1, -1) and pos[0] in range(self.x_pos, self.x_pos + self.length) \
            and pos[1] in range(self.y_pos, self.y_pos + self.height):
-            return True
+            return True        
+    
+    def select(self, pos):
+        return self.__in_gui(pos)
         
     def release(self, pos):
-        return self.select(pos)
+        return self.__in_gui(pos)
         
     def draw(self):
         pygame.draw.rect(self.display, self.background_colour, pygame.Rect(self.x_pos, self.y_pos, self.length, self.height))        
