@@ -14,9 +14,18 @@ def create_level(gui):
     map = gui.get_map()
     measurement = gui.get_map_measurements()
     map_representation = []
+    length = measurement[0]
+    flag_check = False
+    for x in range(measurement[0]):
+        if map.get((x, 4)).get_icon_string() == "T":
+            flag_check = True
+            length = x + 3
+            break
+    if not flag_check:
+        gui.draw_flag(measurement[0] - 3)
     for y in range(measurement[1]):
-        map_representation.append(["-"] * measurement[0])
-        for x in range(measurement[0]):
+        map_representation.append(["-"] * length)
+        for x in range(length):
             map_representation[y][x] = map.get((x, y)).get_icon_string()
         map_representation[y] = "".join(map_representation[y])
     map_representation = "\n".join(map_representation)

@@ -48,6 +48,12 @@ class MainGui:
     def set_icon(self, icon):
         self.selected_icon = icon
         
+    def draw_flag(self, x):
+        old_icon = self.get_icon()
+        self.set_icon("F")
+        self.guis["map"].add_icon((x, 4))
+        self.set_icon(old_icon)
+        
     def get_map(self):
         return self.guis["map"].get_map()
     
