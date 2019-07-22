@@ -4,16 +4,13 @@ while true do
 	-- Declare and set variables or functions if needed
 
 	frame = 1
+	state = nil
 
 	while true do
 		
 		-- Execute instructions for FCEUX
-		if (frame < 150 and frame > 50) then	
-			joypad.write(1, {start=1})
-		else
-			joypad.write(1, {right=1})
-		end;
-		
+
+		-- Check whether Mario has died (or reached the end)
 		black = frame > 200
 		if frame > 200 then
 			for x = 0, 255 do
@@ -27,7 +24,19 @@ while true do
 			print("RESTART");
 			break;
 		end;
+
+		-- Decide which 
+
+		if (frame % 20 == 0) then -- 3 Times a second, decide which buttons to push
+			if (frame < 150 and frame > 50) then	
+				state = {start=1}
+			else
+				state = {right=1}
+			end;
+		end;
+		joypad.write(1, state)
 		
+		--
 		gui.text(20, 20, frame)
 	  	emu.frameadvance() -- This essentially tells FCEUX to keep running
 		frame = frame + 1
