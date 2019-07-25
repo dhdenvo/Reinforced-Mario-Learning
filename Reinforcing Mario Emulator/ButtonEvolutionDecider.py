@@ -6,10 +6,10 @@
    Modified by David Daghelian for use with python's gym_super_mario_bros
 '''
 
+from nes_py.wrappers import JoypadSpace
+import gym_super_mario_bros
+from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 import random
-
-gameinfo = {}
-gameinfo.getromname = "Super Mario Bros."
 
 ButtonNames = [
     "A",
@@ -19,6 +19,10 @@ ButtonNames = [
     "left",
     "right",
 ]
+
+marioX = 0
+marioY = 0
+controller = {}
 
 BoxRadius = 6
 InputSize = (BoxRadius*2+1)*(BoxRadius*2+1)
@@ -48,12 +52,12 @@ TimeoutConstant = 20
 
 MaxNodes = 1000000
 
-def getPositions():
+'''def getPositions():
     marioX = memory.readbyte(0x6D) * 0x100 + memory.readbyte(0x86)
     marioY = memory.readbyte(0x03B8)+16
     
     screenX = memory.readbyte(0x03AD)
-    screenY = memory.readbyte(0x03B8)
+    screenY = memory.readbyte(0x03B8)'''
 
 
 def getTile(dx, dy):
@@ -117,8 +121,8 @@ def getInputs():
                 if distx < 8 and disty < 8:
                     inputs[len(inputs)] = -1
 
-        --mariovx = memory.read_s8(0x7B)
-        --mariovy = memory.read_s8(0x7D)
+        #mariovx = memory.read_s8(0x7B)
+        #mariovy = memory.read_s8(0x7D)
 
     return inputs
 
@@ -324,7 +328,7 @@ def randomNeuron(genes, nonInput):
     
     n = random.randint(0, count - 1)
 
-    for k,v in pairs(neurons):
+    for k,v in neurons.items():
         n -= 1
         if n == -1:
             return k
@@ -341,7 +345,7 @@ def containsLink(genes, link):
 def pointMutate(genome):
     step = genome["mutationRates"]["step"]
 
-    for i in range(0, len(genome.genes)):
+    for i in range(0, len(genome["genes"])):
         gene = genome["genes"][i]
         rand = random.random()
         if rand < PerturbChance:
@@ -350,8 +354,8 @@ def pointMutate(genome):
             gene["weight"] = rand * 4 - 2
 
 def linkMutate(genome, forceBias):
-    neuron1 = randomNeuron(genome.genes, False)
-    neuron2 = randomNeuron(genome.genes, True)
+    neuron1 = randomNeuron(genome["genes"], False)
+    neuron2 = randomNeuron(genome["genes"], True)
 
     newLink = newGene()
     if neuron1 <= Inputs and neuron2 <= Inputs:
@@ -402,7 +406,7 @@ def nodeMutate(genome):
 def enableDisableMutate(genome, enable):
     candidates = []
     for gene in genome["genes"]:
-        if gene["enabled"] == not enable:
+        if gene["enabled"] != enable:
             candidates.append(gene)
 
     if len(candidates) == 0:
@@ -501,9 +505,9 @@ def sameSpecies(genome1, genome2):
 
 def rankGlobally():
     globals = []
-    for s in range(0, len(pool.species)):
-        species = pool.species[s]
-        for g in range(0, len(species.genomes)):
+    for s in range(0, len(pool["species"])):
+        species = pool["species"][s]
+        for g in range(0, len(species["genomes"])):
             globals.append(species["genomes"][g])
             
     globals = sorted(globals, key=lambda k: k["fitness"])        
@@ -557,7 +561,6 @@ def breedChild(species):
         child = copyGenome(g)
 
     mutate(child)
-
     return child
 
 def removeStaleSpecies():
@@ -636,7 +639,6 @@ def newGeneration():
 
     pool["generation"] += 1
 
-    #writeFile("backup." .. pool.generation .. "." .. forms.gettext(saveLoadFile))
     writeFile("backup." + pool.generation + ".txt")
 
 
@@ -648,16 +650,28 @@ def initializePool():
         addToSpecies(basic)
 
     initializeRun()
+    
+if pool == None:
+    initializePool()
 
 def clearJoypad():
-    controller = {}
+    controller.clear()
+    for joy in ButtonNames:
+        controller[joy] = False
+    #Write To Joypad
+    #joypad.write(1, controller)	
+    
+def loadPool():
+    #Forms Stuff
+    #filename = forms.gettext(saveLoadFile)
+    loadFile(filename)
     for b in range(0, len(ButtonNames)):
         controller[ButtonNames[b]] = False
     #Write To Joypad
-    joypad.write(1, controller)
+    #joypad.write(1, controller)
 
 def initializeRun():
-    savestate.load(Filename);
+    savestate.load(Filename)
     rightmost = 0
     pool.currentFrame = 0
     timeout = TimeoutConstant
@@ -674,7 +688,9 @@ def evaluateCurrent():
     genome = species["genomes"][pool["currentGenome"]]
 
     inputs = getInputs()
-    controller = evaluateNetwork(genome["network"], inputs)
+    for key, value in evaluateNetwork(genome["network"], inputs).items():
+        controller[key] = value
+    #controller = evaluateNetwork(genome["network"], inputs)
 
     if controller["Left"] and controller["Right"]:
         controller["Left"] = False
@@ -683,10 +699,8 @@ def evaluateCurrent():
         controller["Up"] = False
         controller["Down"] = False
 
-    joypad.write(1, controller)
-
-if pool == None:
-    initializePool()
+    #Joypad Stuff
+    #joypad.write(1, controller)
 
 
 def nextGenome():
@@ -846,20 +860,12 @@ def writeFile(filename):
                     file.write("0\n")
                     
     file.close()
-    
-
-def savePool():
-    #Forms Stuff
-    #filename = forms.gettext(saveLoadFile)
-    writeFile(filename)
 
 def loadFile(filename):
     file = open(filename, "r")
     pool = newPool()
     pool["generation"] = int(file.readline())
     pool["maxFitness"] = int(file.readline())
-    #Forms Stuff
-    #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
     numSpecies = int(file.readline())
     for s in range(0, numSpecies):
         species = newSpecies()
@@ -890,12 +896,6 @@ def loadFile(filename):
         
     initializeRun()
     pool["currentFrame"] += 1
-    
-
-def loadPool():
-    #Forms Stuff
-    #filename = forms.gettext(saveLoadFile)
-    loadFile(filename)
 
 def playTop():
     maxfitness = 0
@@ -911,56 +911,31 @@ def playTop():
     pool["currentSpecies"] = maxs
     pool["currentGenome"] = maxg
     pool["maxFitness"] = maxfitness
-    #Forms Stuff
-    #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
     initializeRun()
     pool["currentFrame"] += 1
     return
 
-#def onExit():
-#	forms.destroy(form)
-#end
+
+env = gym_super_mario_bros.make('SuperMarioBros-v0')
+env = JoypadSpace(env, COMPLEX_MOVEMENT)
+
+sort_move = []
+for move in COMPLEX_MOVEMENT:
+    sort_move.append(sorted(move))
 
 writeFile("temp.pool")
 
-#Emulator Things
-#emu.registerexit(onExit)
-
-#Forms Stuff
-#maxFitnessLabel = gui.text(5, 8, "Max Fitness: " .. math.floor(pool.maxFitness))
-#form = forms.newform(200, 260, "Fitness")
-#maxFitnessLabel = forms.label(form, "Max Fitness: " .. math.floor(pool.maxFitness), 5, 8)
-#showNetwork = forms.checkbox(form, "Show Map", 5, 30)
-#showMutationRates = forms.checkbox(form, "Show M-Rates", 5, 52)
-#restartButton = forms.button(form, "Restart", initializePool, 5, 77)
-#saveButton = forms.button(form, "Save", savePool, 5, 102)
-#loadButton = forms.button(form, "Load", loadPool, 80, 102)
-#saveLoadFile = forms.textbox(form, Filename .. ".pool", 170, 25, nil, 5, 148)
-#saveLoadLabel = forms.label(form, "Save/Load:", 5, 129)
-#playTopButton = forms.button(form, "Play Top", playTop, 5, 170)
-#hideBanner = forms.checkbox(form, "Hide Banner", 5, 190)
-
-
 while True:
     backgroundColor = 0xD0FFFFFF
-    #Draw Stuff
-    #if not forms.ischecked(hideBanner) then
-    #	gui.drawBox(0, 0, 300, 26, backgroundColor, backgroundColor)
-    #end
 
-    species = pool.species[pool.currentSpecies]
-    genome = species.genomes[pool.currentGenome]
-
-    #Forms Stuff
-    #if forms.ischecked(showNetwork) then
-    #	displayGenome(genome)
-    #end
+    species = pool["species"][pool["currentSpecies"]]
+    genome = species["genomes"][pool["currentGenome"]]
     
-    if pool.currentFrame%5 == 0:
+    if pool["currentFrame"] % 5 == 0:
         evaluateCurrent()
 
     #Write To Joypad
-    joypad.write(1, controller)
+    #joypad.write(1, controller)
     
     getPositions()
     if marioX > rightmost:
@@ -972,19 +947,16 @@ while True:
     timeoutBonus = pool["currentFrame"] / 4
     if timeout + timeoutBonus <= 0:
         fitness = rightmost - pool["currentFrame"] / 2
-        if gameinfo.getromname == "Super Mario Bros." and rightmost > 3186:
+        if rightmost > 3186:
             fitness = fitness + 1000
         if fitness == 0:
             fitness = -1
-        genome.fitness = fitness
+        genome["fitness"] = fitness
 
         if fitness > pool["maxFitness"]:
-            pool.maxFitness = fitness
-	    #Forms Stuff
-	    #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
-	    writeFile("backup." + pool.generation + ".txt")
-	    #writeFile("backup." .. pool.generation .. "." .. forms.gettext(saveLoadFile))
-
+            pool["maxFitness"] = fitness
+            writeFile("backup." + pool.generation + ".txt")
+	    
     print("Gen:", pool.generation, "species:", pool.currentSpecies, "genome:", pool.currentGenome, " fitness:", fitness)
     pool["currentSpecies"] = 1
     pool["currentGenome"] = 1
@@ -999,15 +971,22 @@ while True:
             total += 1
             if genome["fitness"] != 0:
                 measured += 1
-		
-    #Forms Stuff
-    #Draw Stuff
-    #if not forms.ischecked(hideBanner) then
-    #	gui.drawText(0, 0, "Gen " .. pool.generation .. " species " .. pool.currentSpecies .. " genome " .. pool.currentGenome .. " (" .. math.floor(measured/total*100) .. "%)", 0xFF000000, 11)
-    #	gui.drawText(0, 12, "Fitness: " .. math.floor(rightmost - (pool.currentFrame) / 2 - (timeout + timeoutBonus)*2/3), 0xFF000000, 11)
-    #	gui.drawText(100, 12, "Max Fitness: " .. math.floor(pool.maxFitness), 0xFF000000, 11)
-    #end
 
     pool["currentFrame"] += 1
 
-    emu.frameadvance();
+    
+    old_joys = joys[:]
+    joys = []
+    for joy, active in controller.items():
+        if active:
+            joys.append(joy)
+    
+    joys = sorted(joys)
+    if not joys in sort_move:
+        joys = old_joys[:]
+    
+    control = sort_move.index(joys)
+    
+    state, reward, done, info = env.step(control)
+    env.render()    
+    #emu.frameadvance()
