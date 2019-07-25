@@ -5,14 +5,20 @@ env = gym_super_mario_bros.make('SuperMarioBros-v0')
 env = JoypadSpace(env, SIMPLE_MOVEMENT)
 
 done = True
-step = 0
+frame = 0
+
 while True:
+       
     if done:
         state = env.reset()
+        frame = 0
     state, reward, done, info = env.step(env.action_space.sample())
     #print(info)
-    #print(reward, info["x_pos"], info["y_pos"])
+    print(reward, info["x_pos"], info["y_pos"])
     env.render()
-    step += 1
+    frame += 1
+    if (info["time"] == 360):
+        env.reset()
+        frame = 0
 
 env.close()
