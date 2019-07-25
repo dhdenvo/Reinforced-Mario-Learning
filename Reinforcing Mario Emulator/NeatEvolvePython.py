@@ -501,8 +501,8 @@ def sameSpecies(genome1, genome2):
 
 def rankGlobally():
     globals = []
-    for s in range(0, len(pool.species)):
-        species = pool.species[s]
+    for s in range(0, len(pool["species"])):
+        species = pool["species"][s]
         for g in range(0, len(species.genomes)):
             globals.append(species["genomes"][g])
 
@@ -512,7 +512,7 @@ def rankGlobally():
     end)'''
 
     for g in range(0,len(globals)):
-        globals[g].globalRank = g
+        globals[g]["globalRank"] = g
 
 def calculateAverageFitness(species):
     total = 0
@@ -948,15 +948,15 @@ while True:
     #	gui.drawBox(0, 0, 300, 26, backgroundColor, backgroundColor)
     #end
 
-    species = pool.species[pool.currentSpecies]
-    genome = species.genomes[pool.currentGenome]
+    species = pool["species"][pool["currentSpecies"]]
+    genome = species["genomes"][pool["currentGenome"]]
 
     #Forms Stuff
     #if forms.ischecked(showNetwork) then
     #	displayGenome(genome)
     #end
 
-    if pool.currentFrame%5 == 0:
+    if pool["currentFrame"] % 5 == 0:
         evaluateCurrent()
 
     #Write To Joypad
