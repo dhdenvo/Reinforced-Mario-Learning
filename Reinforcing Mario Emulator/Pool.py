@@ -1,4 +1,5 @@
 import math
+import random
 
 ButtonNames = ["A","B","up","down","left","right",]
 
@@ -6,7 +7,7 @@ class Pool:
     def __init__(self):
         self.species = []
         self.globals = []
-        self.controler = {}
+        self.controller = {}
         self.generation = 0
         self.innovation = Outputs
         self.currentSpecies = 1
@@ -127,7 +128,7 @@ class Pool:
         cullSpecies(True) # Cull all but the top member of each species
         
         while len(children) + len(self.species) < Population:
-            species = pool.species[math.random(1, len(pool.species))]
+            species = pool.species[random.randint(1, len(pool.species))]
             children.append(species.breedChild())
         
         for c in range(0,len(children)):

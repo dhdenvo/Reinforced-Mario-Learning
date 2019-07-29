@@ -1,3 +1,5 @@
+import random
+
 def sigmoid(x):
     return 2/(1+math.exp(-4.9*x))-1
 

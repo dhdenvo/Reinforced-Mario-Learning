@@ -155,11 +155,15 @@ def initializePool():
         pool.addToSpecies(basic)
             
     initializeRun()
+    return pool
 
 
-#if pool == nil then
-initializePool()
-#end
+pool = None
+begin = True
+if begin:
+    pool = initializePool()
+#else:
+    #pool = LoadPool()
 
 '''def savePool()
     #local filename = forms.gettext(saveLoadFile)
@@ -171,13 +175,8 @@ end'''
     loadFile(filename)
 end'''
 
-#def onExit()
-#	forms.destroy(form)
-#end
 
-writeFile("temp.pool")
-
-#emu.registerexit(onExit)
+#writeFile("temp.pool")
 
 #maxFitnessLabel = gui.text(5, 8, "Max Fitness: " .. math.floor(pool.maxFitness))
 #form = forms.newform(200, 260, "Fitness")

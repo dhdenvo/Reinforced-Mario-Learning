@@ -1,3 +1,5 @@
+import random
+
 class Species:
     def __init__(self):
         self.topFitness = 0
