@@ -4,8 +4,7 @@ Intended for use with the BizHawk emulator and Super Mario World or Super Mario 
 For SMW, make sure you have a save state named "DP1.state" at the beginning of a level,
 and put a copy in both the Lua folder and the root directory of BizHawk. '''
 
-
-ButtonNames = ["A","B","up","down","left","right",]
+ButtonNames = ["A","B","up","down","left","right"]
 
 joypad.write(1, {start:True})
 
@@ -117,6 +116,38 @@ def getInputs():
     return inputs
 end
 
+def recur_create(controls, prev, x):
+    for y in x:
+	next_cont = prev[:]
+	next_cont.append(y)
+	if "left" in next_cont and "right" in next_cont:
+	    next_cont.remove("left")
+	    next_cont.remove("right")
+	if "up" in next_cont and "down" in next_cont:
+	    next_cont.remove("up")
+	    next_cont.remove("down")
+	next_cont.sort()
+	if not next_cont in controls and next_cont != []:
+	    controls.append(next_cont)
+	z = x[:]
+	z.remove(y)
+	recur_create(controls, next_cont, z)
+
+
+def calc_control_input(avail_movement, controller):
+    controls = []
+    for key, valid in controller.items():
+	if valid:
+	    controls.append(key)
+    
+    controls.sort()
+    sorted_movement = [move[:] for move in avail_movement]
+    for avail in sorted_movement:
+	avail.sort()
+	
+    if controls in sorted_movement:
+	return sorted_movement.index(controls)
+
 def initializePool():
     pool = Pool()
     for i in range(0,Population):
@@ -161,6 +192,12 @@ writeFile("temp.pool")
 #playTopButton = forms.button(form, "Play Top", playTop, 5, 170)
 #hideBanner = forms.checkbox(form, "Hide Banner", 5, 190)
 
+complex_controls = []
+recur_create(complex_controls, [], ButtonNames)
+complex_controls = sorted(complex_controls, key=lambda k: len(k))
+
+env = gym_super_mario_bros.make('SuperMarioBros-v0')
+env = JoypadSpace(env, complex_controls)
 
 while True:
     #local backgroundColor = 0xD0FFFFFF
@@ -178,7 +215,9 @@ while True:
     if pool.currentFrame % 5 == 0:
         pool.evaluateCurrent()
 
-    joypad.write(1, pool.controller)
+    control_input = cal_control_input(complex_controls, pool.controller)
+    state, reward, done, info = env.step(control_input)
+    #joypad.write(1, pool.controller)
 
     getPositions()
     if marioX > rightmost then
