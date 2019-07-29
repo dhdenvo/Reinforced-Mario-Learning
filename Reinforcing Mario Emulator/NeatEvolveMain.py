@@ -35,15 +35,7 @@ TimeoutConstant = 20
 
 MaxNodes = 1000000
 
-def getPositions():
-    marioX = memory.readbyte(0x6D) * 0x100 + memory.readbyte(0x86)
-    marioY = memory.readbyte(0x03B8)+16
-    
-    screenX = memory.readbyte(0x03AD)
-    screenY = memory.readbyte(0x03B8)
-
-
-def getTile(dx, dy):
+'''def getTile(dx, dy):
     x = marioX + dx + 8
     y = marioY + dy - 16
     page = math.floor(x/256)%2
@@ -114,7 +106,7 @@ def getInputs():
         #mariovy = memory.read_s8(0x7D)
 
     return inputs
-end
+end'''
 
 def recur_create(controls, prev, x):
     for y in x:
@@ -216,66 +208,54 @@ while True:
 
     control_input = cal_control_input(complex_controls, pool.controller)
     state, reward, done, info = env.step(control_input)
+    pool.marioX = info["x_pos"]
+    pool.marioY = info["y_pos"]
+    
     #joypad.write(1, pool.controller)
 
-    getPositions()
-    if marioX > rightmost then
-        rightmost = marioX
-        timeout = TimeoutConstant
-    end
+    if pool.marioX > pool.rightmost:
+        pool.rightmost = pool.marioX
+        pool.timeout = TimeoutConstant
 
-    timeout = timeout - 1
+    pool.timeout -= 1
 
 
-    local timeoutBonus = pool.currentFrame / 4
-    if timeout + timeoutBonus <= 0 then
-        local fitness = rightmost - pool.currentFrame / 2
-        if gameinfo.getromname == "Super Mario World (USA)" and rightmost > 4816 then
+    timeoutBonus = pool.currentFrame / 4
+    if pool.timeout + timeoutBonus <= 0:
+        fitness = rightmost - pool.currentFrame / 2
+        if rightmost > 3186:
             fitness = fitness + 1000
-        end
-        if gameinfo.getromname == "Super Mario Bros." and rightmost > 3186 then
-            fitness = fitness + 1000
-        end
-        if fitness == 0 then
+        if fitness == 0:
             fitness = -1
-        end
         genome.fitness = fitness
 
-        if fitness > pool.maxFitness then
+        if fitness > pool.maxFitness:
             pool.maxFitness = fitness
-            gui.text(5, 8, "Max Fitness: " .. math.floor(pool.maxFitness))
+            #gui.text(5, 8, "Max Fitness: " .. math.floor(pool.maxFitness))
 	    #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
-	    writeFile("backup." .. pool.generation .. ".")
-	    #writeFile("backup." .. pool.generation .. "." .. forms.gettext(saveLoadFile))
-	end
+	    writeFile("backup - " + str(pool.generation) + ".txt")
 
-    #console.writeline("Gen " .. pool.generation .. " species " .. pool.currentSpecies .. " genome " .. pool.currentGenome .. " fitness: " .. fitness)
-    print("Gen", pool.generation, "species", pool.currentSpecies, "genome", pool.currentGenome, "fitness:", fitness)
-    pool.currentSpecies = 1
-    pool.currentGenome = 1
-    while fitnessAlreadyMeasured() do
-        nextGenome()
-    end
-    initializeRun()
-    end
+	#console.writeline("Gen " .. pool.generation .. " species " .. pool.currentSpecies .. " genome " .. pool.currentGenome .. " fitness: " .. fitness)
+	print("Gen", pool.generation, "species", pool.currentSpecies, "genome", pool.currentGenome, "fitness:", fitness)
+	pool.currentSpecies = 1
+	pool.currentGenome = 1
+	while fitnessAlreadyMeasured():
+	    nextGenome()
+	
+	initializeRun()
 
-    local measured = 0
-    local total = 0
-    for _,species in pairs(pool.species) do
-        for _,genome in pairs(species.genomes) do
+    measured = 0
+    total = 0
+    for species in pool.species:
+        for genome in species.genomes:
             total = total + 1
-            if genome.fitness ~= 0 then
+            if genome.fitness != 0:
                 measured = measured + 1
-            end
-        end
-    end
+
     #if not forms.ischecked(hideBanner) then
     #	gui.drawText(0, 0, "Gen " .. pool.generation .. " species " .. pool.currentSpecies .. " genome " .. pool.currentGenome .. " (" .. math.floor(measured/total*100) .. "%)", 0xFF000000, 11)
     #	gui.drawText(0, 12, "Fitness: " .. math.floor(rightmost - (pool.currentFrame) / 2 - (timeout + timeoutBonus)*2/3), 0xFF000000, 11)
     #	gui.drawText(100, 12, "Max Fitness: " .. math.floor(pool.maxFitness), 0xFF000000, 11)
     #end
 
-    pool.currentFrame = pool.currentFrame + 1
-
-    emu.frameadvance();
-end
+    pool.currentFrame += 1

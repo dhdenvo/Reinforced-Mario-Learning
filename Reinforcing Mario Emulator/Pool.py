@@ -8,6 +8,10 @@ class Pool:
         self.species = []
         self.globals = []
         self.controller = {}
+        self.rightmost = 0
+        self.timeout = 0
+        self.marioX = 0
+        self.marioY = 0
         self.generation = 0
         self.innovation = Outputs
         self.currentSpecies = 1
@@ -160,9 +164,9 @@ class Pool:
     def initializeRun(self):
         #savestate.load(Filename);
         #env.reset()
-        rightmost = 0
+        self.rightmost = 0
         self.currentFrame = 0
-        timeout = TimeoutConstant
+        self.timeout = TimeoutConstant
         clearJoypad()
     
         species = self.species[self.currentSpecies]
