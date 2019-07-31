@@ -35,7 +35,10 @@ TimeoutConstant = 20
 
 MaxNodes = 1000000
 
-'''def getTile(dx, dy):
+############################################################################
+#Work on areas inside comment (Required to get working)
+
+def getTile(dx, dy):
     x = marioX + dx + 8
     y = marioY + dy - 16
     page = math.floor(x/256)%2
@@ -67,46 +70,43 @@ def getSprites():
 def getExtendedSprites():
         return []
 
-def getInputs():
-    getPositions()
-
+def getInputs(pool):
+    
+    marioX = pool.marioX
+    marioY = pool.marioY
+    
     sprites = getSprites()
     extended = getExtendedSprites()
 
-    local inputs = {}
+    inputs = {}
 
-    for dy=-BoxRadius*16,BoxRadius*16,16 do
-        for dx=-BoxRadius*16,BoxRadius*16,16 do
+    for dy in range(-BoxRadius * 16, (BoxRadius + 1) * 16, 16):
+        for dx in range(-BoxRadius * 16, (BoxRadius + 1) * 16 ,16):
             inputs[len(inputs)+1] = 0
 
-                               tile = getTile(dx, dy)
-                        if tile == 1 and marioY+dy < 0x1B0 then
-                        inputs[len(inputs)] = 1
-                                       end
+	    tile = getTile(dx, dy)
+	    if tile == 1 and marioY+dy < 0x1B0:
+		inputs[len(inputs)] = 1
 
-                        for i = 1,len(sprites) do
-                        distx = math.abs(sprites[i]["x"] - (marioX+dx))
-                                disty = math.abs(sprites[i]["y"] - (marioY+dy))
-                                if distx <= 8 and disty <= 8 then
-                                inputs[len(inputs)] = -1
-                                               end
-                                end
+	    for i in range(0,len(sprites)):
+		distx = math.abs(sprites[i]["x"] - (marioX+dx))
+		disty = math.abs(sprites[i]["y"] - (marioY+dy))
+		if distx <= 8 and disty <= 8:
+		    inputs[len(inputs)] = -1
 
-                        for i = 1,len(extended) do
-                        distx = math.abs(extended[i]["x"] - (marioX+dx))
-                                disty = math.abs(extended[i]["y"] - (marioY+dy))
-                                if distx < 8 and disty < 8 then
-                                inputs[len(inputs)] = -1
-                                               end
-                                end
-                        end
-                end
+	    for i in range(0,len(extended)):
+		distx = math.abs(extended[i]["x"] - (marioX+dx))
+		disty = math.abs(extended[i]["y"] - (marioY+dy))
+		if distx < 8 and disty < 8:
+		    inputs[len(inputs)] = -1
 
         #mariovx = memory.read_s8(0x7B)
         #mariovy = memory.read_s8(0x7D)
 
     return inputs
-end'''
+
+
+#####################################################################################
 
 def recur_create(controls, prev, x):
     for y in x:
