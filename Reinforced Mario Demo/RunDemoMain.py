@@ -33,7 +33,7 @@ else:
 
 lua_script = open("NeatEvolve.lua", "r")
 running_script = open("RunningEvolve.lua", "w")
-running_script.write(lua_script.replace("David Was Here!!!!", "Backups/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load)))
+running_script.write(lua_script.read().replace("David Was Here!!!!", "Backups/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load)))
 
-run_demo_cmd = "fceux -lua RunningEvolve.lua " + rom_name
+run_demo_cmd = "fceux -lua RunningEvolve.lua " + params_out[valid_params.index("-rom")]
 os.system(run_demo_cmd)
