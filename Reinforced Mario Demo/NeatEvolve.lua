@@ -1112,8 +1112,9 @@ end
 
 if pool == nil then
     initializePool()
-    if Mario Jumpman Mario:
+    if Mario Jumpman Mario then
         loadFile("David Was Here!!!!")
+    end
 end
 
 function playTop()
