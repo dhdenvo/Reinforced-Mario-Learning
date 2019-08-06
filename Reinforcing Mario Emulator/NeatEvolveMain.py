@@ -77,7 +77,7 @@ complex_controls = [["NOOP"]]
 recur_create(complex_controls, [], ButtonNames)
 complex_controls = sorted(complex_controls, key=lambda k: len(k))
 
-env = MarioNESRomEnv("/home/DavidDaghelian/Programs/Pie-Thon/Super Mario Bros Programs/Super Mario Bros Details/Final Products/Super Mario Bros (Machine Learned).nes")
+env = MarioNESRomEnv("/home/DavidDaghelian/Programs/Pie-Thon/ReinforcedMarioLearning/Reinforcing Mario Emulator/Super Mario Bros (Machine Learned).nes")
 env = JoypadSpace(env, complex_controls)
 
 
