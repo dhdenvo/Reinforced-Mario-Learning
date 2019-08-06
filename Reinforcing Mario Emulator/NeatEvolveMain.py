@@ -4,169 +4,59 @@ Intended for use with the BizHawk emulator and Super Mario World or Super Mario 
 For SMW, make sure you have a save state named "DP1.state" at the beginning of a level,
 and put a copy in both the Lua folder and the root directory of BizHawk. '''
 
-ButtonNames = ["A","B","up","down","left","right"]
-
-joypad.write(1, {start:True})
-
-BoxRadius = 6
-InputSize = (BoxRadius*2+1)*(BoxRadius*2+1)
-
-Inputs = InputSize + 1
-Outputs = len(ButtonNames)
-
-Population = 300
-DeltaDisjoint = 2.0
-DeltaWeights = 0.4
-DeltaThreshold = 1.0
-
-StaleSpecies = 15
-
-MutateConnectionsChance = 0.25
-PerturbChance = 0.90
-CrossoverChance = 0.75
-LinkMutationChance = 2.0
-NodeMutationChance = 0.50
-BiasMutationChance = 0.40
-StepSize = 0.1
-DisableMutationChance = 0.4
-EnableMutationChance = 0.2
-
-TimeoutConstant = 20
-
-MaxNodes = 1000000
-
-############################################################################
-#Work on areas inside comment (Required to get working)
-
-def getTile(dx, dy):
-    x = marioX + dx + 8
-    y = marioY + dy - 16
-    page = math.floor(x/256)%2
-
-    subx = math.floor((x%256)/16)
-    suby = math.floor((y - 32)/16)
-    addr = 0x500 + page*13*16+suby*16+subx
-
-    if suby >= 13 or suby < 0:
-        return 0
-
-    if memory.readbyte(addr) != 0:
-        return 1
-    else:
-        return 0
-    
-
-def getSprites():
-    sprites = []
-    for slot in range(0,5):
-        enemy = memory.readbyte(0xF+slot)
-        if enemy != 0:
-            ex = memory.readbyte(0x6E + slot)*0x100 + memory.readbyte(0x87+slot)
-            ey = memory.readbyte(0xCF + slot)+24
-            sprites[len(sprites)+1] = {["x"]:ex,["y"]:ey}
-
-    return sprites
-
-def getExtendedSprites():
-        return []
-
-def getInputs(pool):
-    
-    marioX = pool.marioX
-    marioY = pool.marioY
-    
-    sprites = getSprites()
-    extended = getExtendedSprites()
-
-    inputs = {}
-
-    for dy in range(-BoxRadius * 16, (BoxRadius + 1) * 16, 16):
-        for dx in range(-BoxRadius * 16, (BoxRadius + 1) * 16 ,16):
-            inputs[len(inputs)+1] = 0
-
-	    tile = getTile(dx, dy)
-	    if tile == 1 and marioY+dy < 0x1B0:
-		inputs[len(inputs)] = 1
-
-	    for i in range(0,len(sprites)):
-		distx = math.abs(sprites[i]["x"] - (marioX+dx))
-		disty = math.abs(sprites[i]["y"] - (marioY+dy))
-		if distx <= 8 and disty <= 8:
-		    inputs[len(inputs)] = -1
-
-	    for i in range(0,len(extended)):
-		distx = math.abs(extended[i]["x"] - (marioX+dx))
-		disty = math.abs(extended[i]["y"] - (marioY+dy))
-		if distx < 8 and disty < 8:
-		    inputs[len(inputs)] = -1
-
-        #mariovx = memory.read_s8(0x7B)
-        #mariovy = memory.read_s8(0x7D)
-
-    return inputs
-
-
-#####################################################################################
+from Gene import Gene
+from Genome import Genome
+from Network import Network
+from Neuron import Neuron
+from Pool import Pool
+from Species import Species
+from nes_py.wrappers import JoypadSpace
+from MarioNESRomEnv import MarioNESRomEnv
+from NeuralConstants import *
 
 def recur_create(controls, prev, x):
     for y in x:
-	next_cont = prev[:]
-	next_cont.append(y)
-	if "left" in next_cont and "right" in next_cont:
-	    next_cont.remove("left")
-	    next_cont.remove("right")
-	if "up" in next_cont and "down" in next_cont:
-	    next_cont.remove("up")
-	    next_cont.remove("down")
-	next_cont.sort()
-	if not next_cont in controls and next_cont != []:
-	    controls.append(next_cont)
-	z = x[:]
-	z.remove(y)
-	recur_create(controls, next_cont, z)
+        next_cont = prev[:]
+        next_cont.append(y)
+        if "left" in next_cont and "right" in next_cont:
+            next_cont.remove("left")
+            next_cont.remove("right")
+        if "up" in next_cont and "down" in next_cont:
+            next_cont.remove("up")
+            next_cont.remove("down")
+        next_cont.sort()
+        if not next_cont in controls and next_cont != []:
+            controls.append(next_cont)
+        z = x[:]
+        z.remove(y)
+        recur_create(controls, next_cont, z)
 
 
 def calc_control_input(avail_movement, controller):
     controls = []
     for key, valid in controller.items():
-	if valid:
-	    controls.append(key)
-    
+        if valid:
+            controls.append(key)
+
     controls.sort()
     sorted_movement = [move[:] for move in avail_movement]
     for avail in sorted_movement:
-	avail.sort()
-	
+        avail.sort()
+
     if controls in sorted_movement:
-	return sorted_movement.index(controls)
+        return sorted_movement.index(controls)
+    
+    return avail_movement.index(["NOOP"])
 
-def initializePool():
-    pool = Pool()
+def initializePool(env):
+    pool = Pool(env)
     for i in range(0,Population):
-        basic = Genome.basicGenome(pool)
+        basic = Genome(pool)
+        basic.basicGenome()
         pool.addToSpecies(basic)
-            
-    initializeRun()
+        
+    pool.initializeRun()
     return pool
-
-
-pool = None
-begin = True
-if begin:
-    pool = initializePool()
-#else:
-    #pool = LoadPool()
-
-'''def savePool()
-    #local filename = forms.gettext(saveLoadFile)
-    writeFile(filename)
-end'''
-
-'''def loadPool()
-    #local filename = forms.gettext(saveLoadFile)
-    loadFile(filename)
-end'''
-
 
 #writeFile("temp.pool")
 
@@ -183,12 +73,19 @@ end'''
 #playTopButton = forms.button(form, "Play Top", playTop, 5, 170)
 #hideBanner = forms.checkbox(form, "Hide Banner", 5, 190)
 
-complex_controls = []
+complex_controls = [["NOOP"]]
 recur_create(complex_controls, [], ButtonNames)
 complex_controls = sorted(complex_controls, key=lambda k: len(k))
 
-env = gym_super_mario_bros.make('SuperMarioBros-v0')
+env = MarioNESRomEnv("/home/DavidDaghelian/Programs/Pie-Thon/Super Mario Bros Programs/Super Mario Bros Details/Final Products/Super Mario Bros (Machine Learned).nes")
 env = JoypadSpace(env, complex_controls)
+
+
+pool = None
+load = True
+pool = initializePool(env)
+if load:
+    pool.loadFile("Backups/Backup - 267.txt", env)
 
 while True:
     #local backgroundColor = 0xD0FFFFFF
@@ -206,11 +103,15 @@ while True:
     if pool.currentFrame % 5 == 0:
         pool.evaluateCurrent()
 
-    control_input = cal_control_input(complex_controls, pool.controller)
+    control_input = calc_control_input(complex_controls, pool.controller)
     state, reward, done, info = env.step(control_input)
-    pool.marioX = info["x_pos"]
-    pool.marioY = info["y_pos"]
-    
+
+    pool.ram = info["ram"]
+    pool.marioX = pool.ram[0x6D] * 0x100 + pool.ram[0x86]
+    pool.marioY = pool.ram[0x03B8]+16
+    pool.screenX = pool.ram[0x03AD]
+    pool.screenY = pool.ram[0x03B8]       
+
     #joypad.write(1, pool.controller)
 
     if pool.marioX > pool.rightmost:
@@ -222,8 +123,8 @@ while True:
 
     timeoutBonus = pool.currentFrame / 4
     if pool.timeout + timeoutBonus <= 0:
-        fitness = rightmost - pool.currentFrame / 2
-        if rightmost > 3186:
+        fitness = pool.rightmost - pool.currentFrame / 2
+        if pool.rightmost > 3186:
             fitness = fitness + 1000
         if fitness == 0:
             fitness = -1
@@ -232,17 +133,17 @@ while True:
         if fitness > pool.maxFitness:
             pool.maxFitness = fitness
             #gui.text(5, 8, "Max Fitness: " .. math.floor(pool.maxFitness))
-	    #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
-	    writeFile("backup - " + str(pool.generation) + ".txt")
+            #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
+            #pool.writeFile("backup - " + str(pool.generation) + ".txt")
 
-	#console.writeline("Gen " .. pool.generation .. " species " .. pool.currentSpecies .. " genome " .. pool.currentGenome .. " fitness: " .. fitness)
-	print("Gen", pool.generation, "species", pool.currentSpecies, "genome", pool.currentGenome, "fitness:", fitness)
-	pool.currentSpecies = 1
-	pool.currentGenome = 1
-	while fitnessAlreadyMeasured():
-	    nextGenome()
-	
-	initializeRun()
+        #console.writeline("Gen " .. pool.generation .. " species " .. pool.currentSpecies .. " genome " .. pool.currentGenome .. " fitness: " .. fitness)
+        print("Gen", pool.generation, "species", pool.currentSpecies, "genome", pool.currentGenome, "fitness:", fitness)
+        pool.currentSpecies = 0
+        pool.currentGenome = 0
+        while pool.fitnessAlreadyMeasured():
+            pool.nextGenome()
+
+        pool.initializeRun()
 
     measured = 0
     total = 0
@@ -258,4 +159,5 @@ while True:
     #	gui.drawText(100, 12, "Max Fitness: " .. math.floor(pool.maxFitness), 0xFF000000, 11)
     #end
 
+    env.render()
     pool.currentFrame += 1

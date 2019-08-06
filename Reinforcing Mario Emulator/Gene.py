@@ -6,12 +6,12 @@ class Gene:
         self.enabled = True
         self.innovation = 0  
         
-    def copyGene(self):
+    def clone(self):
         gene_two = Gene()
-        gene_two.into = gene.into
-        gene_two.out = gene.out
-        gene_two.weight = gene.weight
-        gene_two.enabled = gene.enabled
-        gene_two.innovation = gene.innovation
+        gene_two.into = self.into
+        gene_two.out = self.out
+        gene_two.weight = self.weight
+        gene_two.enabled = self.enabled
+        gene_two.innovation = self.innovation
     
-        return gene2
+        return gene_two

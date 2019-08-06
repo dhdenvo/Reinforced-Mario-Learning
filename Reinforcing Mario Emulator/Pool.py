@@ -1,27 +1,92 @@
 import math
 import random
+from Species import Species
+from Network import Network
+from Genome import Genome
+from Gene import Gene
+from NeuralConstants import *
 
-ButtonNames = ["A","B","up","down","left","right",]
+
+def getSprites(ram):
+    sprites = []
+    for slot in range(0,5):
+        enemy = ram[0xF+slot]
+        if enemy != 0:
+            ex = ram[0x6E + slot]*0x100 + ram[0x87+slot]
+            ey = ram[0xCF + slot]+24
+            sprites.append({"x":ex,"y":ey})
+
+    return sprites
 
 class Pool:
-    def __init__(self):
+    def __init__(self, env):
+        self.env = env
         self.species = []
         self.globals = []
         self.controller = {}
+        self.clearJoypad()
         self.rightmost = 0
         self.timeout = 0
         self.marioX = 0
         self.marioY = 0
+        self.ram = env.ram
+        self.screenX = 0
+        self.screenY = 0
         self.generation = 0
         self.innovation = Outputs
-        self.currentSpecies = 1
-        self.currentGenome = 1
+        self.currentSpecies = 0
+        self.currentGenome = 0
         self.currentFrame = 0
         self.maxFitness = 0
         
     def clearJoypad(self):
         for b in ButtonNames:
             self.controller[b] = False
+        
+    def getTile(self, ram, dx, dy):
+        x = self.marioX + dx + 8
+        y = self.marioY + dy - 16
+        page = math.floor(x/256)%2
+    
+        subx = math.floor((x%256)/16)
+        suby = math.floor((y - 32)/16)
+        addr = 0x500 + page*13*16+suby*16+subx
+    
+        if suby >= 13 or suby < 0:
+            return 0
+    
+        if ram[addr] != 0:
+            return 1
+        else:
+            return 0    
+        
+    def getInputs(self):
+        marioX = self.marioX
+        marioY = self.marioY
+        ram = self.ram
+    
+        sprites = getSprites(ram)
+    
+        inputs = {}
+    
+        for dy in range(-BoxRadius * 16, (BoxRadius + 1) * 16, 16):
+            for dx in range(-BoxRadius * 16, (BoxRadius + 1) * 16, 16):
+                inputs[len(inputs) + 1] = 0
+    
+                tile = self.getTile(ram, dx, dy)
+                if tile == 1 and marioY+dy < 0x1B0:
+                    inputs[len(inputs)] = 1
+    
+                for i in range(0,len(sprites)):
+                    distx = abs(sprites[i]["x"] - (marioX+dx))
+                    disty = abs(sprites[i]["y"] - (marioY+dy))
+                    if distx <= 8 and disty <= 8:
+                        inputs[len(inputs)] = -1
+    
+        #mariovx = ram[0x7B]
+        #mariovy = ram[0x7D]
+    
+        return inputs        
         
     def new_innovation(self):
         self.innovation = self.innovation + 1
@@ -81,7 +146,7 @@ class Pool:
                 species.staleness = 0
             else:
                 species.staleness = species.staleness + 1
-            if species.staleness < StaleSpecies or species.topFitness >= pool.maxFitness:
+            if species.staleness < StaleSpecies or species.topFitness >= self.maxFitness:
                 survived.append(species)
     
         self.species = survived 
@@ -100,14 +165,14 @@ class Pool:
         
     def addToSpecies(self, child):
         foundSpecies = False
-        for s in range(0,len(pool.species)):
+        for s in range(0,len(self.species)):
             species = self.species[s]
-            if not foundSpecies and sameSpecies(child, species.genomes[1]):
+            if not foundSpecies and child.sameSpecies(species.genomes[0]):
                 species.genomes.append(child)
                 foundSpecies = True
     
         if not foundSpecies:
-            childSpecies = newSpecies()
+            childSpecies = Species()
             childSpecies.genomes.append(child)
             self.species.append(childSpecies)
             
@@ -132,7 +197,7 @@ class Pool:
         cullSpecies(True) # Cull all but the top member of each species
         
         while len(children) + len(self.species) < Population:
-            species = pool.species[random.randint(1, len(pool.species))]
+            species = self.species[random.randint(1, len(self.species))]
             children.append(species.breedChild())
         
         for c in range(0,len(children)):
@@ -143,49 +208,51 @@ class Pool:
 
         #writeFile("backup." .. pool.generation .. "." .. forms.gettext(saveLoadFile))
         ###########Add write file / make able to be accessed
-        #writeFile("backup." .. pool.generation .. ".")	
+        #self.writeFile("backup." + str(self.generation) + ".")	
         
         
     def evaluateCurrent(self):
-        species = self.species[pool.currentSpecies]
-        genome = species.genomes[pool.currentGenome]
+        species = self.species[self.currentSpecies]
+        genome = species.genomes[self.currentGenome]
 
-        inputs = getInputs()
+        inputs = self.getInputs()
         self.controller = genome.network.evaluateNetwork(inputs)
+        for b in ButtonNames:
+            self.controller.setdefault(b, False)
 
-        if self.controller["Left"] and self.controller["Right"]:
-            self.controller["Left"] = False
-            self.controller["Right"] = False
-        if self.controller["Up"] and self.controller["Down"]:
-            self.controller["Up"] = False
-            self.controller["Down"] = False
+        if self.controller["left"] and self.controller["right"]:
+            self.controller["left"] = False
+            self.controller["right"] = False
+        if self.controller["up"] and self.controller["down"]:
+            self.controller["up"] = False
+            self.controller["down"] = False
             
     
     def initializeRun(self):
         #savestate.load(Filename);
-        #env.reset()
+        self.env.reset()
         self.rightmost = 0
         self.currentFrame = 0
         self.timeout = TimeoutConstant
-        clearJoypad()
+        self.clearJoypad()
     
         species = self.species[self.currentSpecies]
         genome = species.genomes[self.currentGenome]
-        self.network = Network(genome)
+        genome.network = Network(genome)
         self.evaluateCurrent()    
         
     def nextGenome(self):
         self.currentGenome = self.currentGenome + 1
-        if self.currentGenome > len(self.species[self.currentSpecies].genomes):
-            self.currentGenome = 1
-            self.currentSpecies = self.currentSpecies+1
+        if self.currentGenome > len(self.species[self.currentSpecies].genomes) - 1:
+            self.currentGenome = 0
+            self.currentSpecies = self.currentSpecies + 1
             if self.currentSpecies > len(self.species):
                 self.newGeneration()
-                self.currentSpecies = 1
+                self.currentSpecies = 0
                 
     def fitnessAlreadyMeasured(self):
         species = self.species[self.currentSpecies]
-        genome = species.genomes[pool.currentGenome]
+        genome = species.genomes[self.currentGenome]
     
         return genome.fitness != 0  
     
@@ -194,6 +261,7 @@ class Pool:
         maxs, maxg = 0,0
         for s,species in enumerate(self.species):
             for g,genome in enumerate(species.genomes):
+                print(s, g)
                 if genome.fitness > maxfitness:
                     maxfitness = genome.fitness
                     maxs = s
@@ -207,84 +275,75 @@ class Pool:
         self.initializeRun()
         self.currentFrame = self.currentFrame + 1
     
-    '''def writeFile(filename)
-        local file = io.open(filename, "w")
-        file:write(pool.generation .. "\n")
-        file:write(pool.maxFitness .. "\n")
-        file:write(len(pool.species) .. "\n")
-                       for n,species in pairs(pool.species) do
-            file:write(species.topFitness .. "\n")
-                    file:write(species.staleness .. "\n")
-                    file:write(len(species.genomes) .. "\n")
-                               for m,genome in pairs(species.genomes) do
-                    file:write(genome.fitness .. "\n")
-                            file:write(genome.maxneuron .. "\n")
-                            for mutation,rate in pairs(genome.mutationRates) do
-                            file:write(mutation .. "\n")
-                                    file:write(rate .. "\n")
-                                    end
-                            file:write("done\n")
+    def writeFile(self, filename):
+        file = open(filename, "w")
+        file.write(str(self.generation) + "\n")
+        file.write(str(self.maxFitness) + "\n")
+        file.write(str(len(self.species)) + "\n")
+        for n,species in enumerate(self.species):
+            file.write(str(species.topFitness) + "\n")
+            file.write(str(species.staleness) + "\n")
+            file.write(str(len(species.genomes)) + "\n")
+            for m,genome in enumerate(species.genomes):
+                file.write(str(genome.fitness) + "\n")
+                file.write(str(genome.maxneuron) + "\n")
+                for mutation,rate in genome.mutationRates.items():
+                    file.write(str(mutation) + "\n")
+                    file.write(str(rate) + "\n")
+                file.write("done\n")
+
+                file.write(str(len(genome.genes)) + "\n")
+                for l,gene in enumerate(genome.genes):
+                    file.write(str(gene.into) + " ")
+                    file.write(str(gene.out) + " ")
+                    file.write(str(gene.weight) + " ")
+                    file.write(str(gene.innovation) + " ")
+                    if gene.enabled:
+                        file.write("1\n")
+                    else:
+                        file.write("0\n")
+        file.close()
     
-                            file:write(len(genome.genes) .. "\n")
-                                       for l,gene in pairs(genome.genes) do
-                            file:write(gene.into .. " ")
-                                    file:write(gene.out .. " ")
-                                    file:write(gene.weight .. " ")
-                                    file:write(gene.innovation .. " ")
-                                    if(gene.enabled) then
-                                    file:write("1\n")
-                                            else
-                                    file:write("0\n")
-                                            end
-                                    end
-                            end
-                    end
-            file:close()
-    end '''    
+    def loadFile(self, filename, env):
+        file = open(filename, "r")
+        self.__init__(env)
+        self.generation = int(file.readline().replace("\n", ""))
+        self.maxFitness = int(file.readline().replace("\n", ""))
+        #gui.settext(5, 8, maxFitnessLabel, "Max Fitness. " .. math.floor(pool.maxFitness))
+        numSpecies = int(file.readline().replace("\n", ""))
+        for s in range(0, numSpecies):
+            species = Species()
+            self.species.append(species)
+            species.topFitness = float(file.readline().replace("\n", ""))
+            species.staleness = int(file.readline().replace("\n", ""))
+            numGenomes = int(file.readline().replace("\n", ""))
+            for g in range(0, numGenomes):
+                genome = Genome(self)
+                species.genomes.append(genome)
+                genome.fitness = float(file.readline().replace("\n", ""))
+                genome.maxneuron = int(file.readline().replace("\n", ""))
+                line = file.readline().replace("\n", "")
+                while line != "done":
+                    genome.mutationRates[line] = float(file.readline().replace("\n", ""))
+                    line = file.readline().replace("\n", "")
+                numGenes = int(file.readline().replace("\n", ""))
+                for n in range(0,numGenes):
+                    gene = Gene()
+                    genome.genes.append(gene)
+                    enabled = 0
+                    line = file.readline()
+                    data = []
+                    for x in [x for i, x in enumerate(line.split(" "))]:
+                        try:
+                            data.append(int(x))
+                        except ValueError:
+                            data.append(float(x))
+                    gene.into, gene.out, gene.weight, gene.innovation, enabled = data
+                    
+                    gene.enabled = enabled == 1
+        file.close()
     
-    '''def loadFile(filename):
-        local file = io.open(filename, "r")
-        pool = newPool()
-        pool.generation = file:read("*number")
-        pool.maxFitness = file:read("*number")
-        #forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
-        gui.settext(5, 8, maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
-        local numSpecies = file:read("*number")
-        for s=1,numSpecies do
-            local species = newSpecies()
-            table.insert(pool.species, species)
-            species.topFitness = file:read("*number")
-            species.staleness = file:read("*number")
-            local numGenomes = file:read("*number")
-            for g=1,numGenomes do
-                local genome = newGenome()
-                table.insert(species.genomes, genome)
-                genome.fitness = file:read("*number")
-                genome.maxneuron = file:read("*number")
-                local line = file:read("*line")
-                while line ~= "done" do
-                    genome.mutationRates[line] = file:read("*number")
-                    line = file:read("*line")
-                end
-                local numGenes = file:read("*number")
-                for n=1,numGenes do
-                    local gene = newGene()
-                    table.insert(genome.genes, gene)
-                    local enabled
-                    gene.into, gene.out, gene.weight, gene.innovation, enabled = file:read("*number", "*number", "*number", "*number", "*number")
-                    if enabled == 0 then
-                        gene.enabled = false
-                    else
-                        gene.enabled = true
-                    end
-                end
-            end
-        end
-        file:close()
-    
-        while fitnessAlreadyMeasured() do
-            nextGenome()
-        end
-        initializeRun()
-        pool.currentFrame = pool.currentFrame + 1
-    end'''    
+        while self.fitnessAlreadyMeasured():
+            self.nextGenome()
+        self.initializeRun()
+        self.currentFrame = self.currentFrame + 1

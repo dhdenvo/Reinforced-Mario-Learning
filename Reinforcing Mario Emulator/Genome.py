@@ -1,4 +1,7 @@
 import random
+from Gene import Gene
+from Network import Network
+from NeuralConstants import *
 
 def sigmoid(x):
     return 2/(1+math.exp(-4.9*x))-1
@@ -9,7 +12,7 @@ class Genome:
         self.pool = pool
         self.fitness = 0
         self.adjustedFitness = 0
-        self.network = {}
+        self.network = None
         self.maxneuron = 0
         self.globalRank = 0
         self.mutationRates = {}
@@ -42,7 +45,7 @@ class Genome:
     
         self.maxneuron = self.maxneuron + 1
     
-        gene = self.genes[random.randint(1,len(self.genes))]
+        gene = self.genes[random.randint(0,len(self.genes) - 1)]
         if not gene.enabled:
             return
         
@@ -54,16 +57,16 @@ class Genome:
         ########################################################NEW INNOVATION
         gene_one.innovation = self.pool.new_innovation()
         gene_one.enabled = True
-        table.insert(self.genes, gene_one)
+        self.genes.append(gene_one)
     
         gene_two = gene.clone()
         gene_two.into = self.maxneuron
         gene_two.innovation = self.pool.new_innovation()
         gene_two.enabled = True
-        table.insert(self.genes, gene_two)
+        self.genes.append(gene_two)
      
     
-    def enableDisableMutate(enable):
+    def enableDisableMutate(self, enable):
         candidates = []
         for gene in self.genes:
             if gene.enabled != enable:
@@ -72,17 +75,17 @@ class Genome:
         if len(candidates) == 0:
             return
     
-        gene = candidates[random.randint(1,len(candidates))]
+        gene = candidates[random.randint(0,len(candidates) - 1)]
         gene.enabled = not gene.enabled 
     
     def mutate(self):
         for mutation,rate in self.mutationRates.items():
             if random.randint(1,2) == 1:
-                genome.mutationRates[mutation] = 0.95 * rate
+                self.mutationRates[mutation] = 0.95 * rate
             else:
-                genome.mutationRates[mutation] = 1.05263 * rate
+                self.mutationRates[mutation] = 1.05263 * rate
     
-        if random.random() < genome.mutationRates["connections"]:
+        if random.random() < self.mutationRates["connections"]:
             self.point_mutate()
 
         p = self.mutationRates["link"]
@@ -90,7 +93,7 @@ class Genome:
             if random.random() < p:
                 self.linkMutate(False)
             p = p - 1
-    
+        
         p = self.mutationRates["bias"]
         while p > 0:
             if random.random() < p:
@@ -115,10 +118,11 @@ class Genome:
                 self.enableDisableMutate(False)
             p = p - 1
             
+        #print(self.genes)
+        
+            
     
-    def basicGenome(self, pool):
-        #I think this line is useless
-        self.__init__(pool)
+    def basicGenome(self):
         innovation = 1
     
         self.maxneuron = Inputs
@@ -248,16 +252,19 @@ class Genome:
         disjointGenes = 0
         for i in range(0,len(self.genes)):
             gene = self.genes[i]
-            if not i2[gene.innovation]:
+            if not i2.get(gene.innovation, None):
                 disjointGenes = disjointGenes+1
     
         for i in range(0,len(other.genes)):
             gene = other.genes[i]
-            if not i1[gene.innovation]:
+            if not i1.get(gene.innovation, None):
                 disjointGenes = disjointGenes+1
     
-        n = math.max(len(self.genes), len(other.genes))
+        n = max(len(self.genes), len(other.genes))
     
+        if n == 0:
+            return None
+            
         return disjointGenes / n     
         
         
@@ -276,12 +283,19 @@ class Genome:
                 sum = sum + math.abs(gene.weight - gene_two.weight)
                 coincident = coincident + 1
     
+        if coincident == 0:
+            return None
+    
         return sum / coincident        
         
         
     def sameSpecies(self, other):
-        dd = DeltaDisjoint * self.disjoint(other)
-        dw = DeltaWeights * self.weights(other) 
+        dis = self.disjoint(other)
+        wei = self.weights(other) 
+        if dis == None or wei == None:
+            return None
+        dd = DeltaDisjoint * dis
+        dw = DeltaWeights * wei            
         return dd + dw < DeltaThreshold
     
     '''def displayGenome(genome):
