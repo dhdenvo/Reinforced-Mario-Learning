@@ -9,10 +9,10 @@ class Network:
     def __init__(self, genome):
         self.neurons = {}
     
-        for i in range(0,Inputs):
+        for i in range(1,Inputs + 1):
             self.neurons[i] = Neuron()
     
-        for o in range(0,Outputs):
+        for o in range(1,Outputs + 1):
             self.neurons[MaxNodes + o] = Neuron()
     
         genome.genes = sorted(genome.genes, key=lambda k: k.out)        
@@ -20,8 +20,8 @@ class Network:
         #    return (a.out < b.out)
         #end)
                  
-        for i in range(0,len(genome.genes)):
-            gene = genome.genes[i]
+        for i in range(1,len(genome.genes) + 1):
+            gene = genome.genes[i - 1]
             if gene.enabled:
                 #print(self.neurons[gene.out])
                 #if self.neurons.get(gene.out, None) == None:
@@ -39,15 +39,23 @@ class Network:
         
         
     def evaluateNetwork(self, inputs):
-        #inputs.append(1)
-        inputs[0] = 0
-        #print(len(inputs))
-        #print(inputs)
+        q = list(inputs.keys())[-1]
+        z = len(inputs)        
+        inputs[list(inputs.keys())[-1] + 1] = 1
+        x = list(inputs.keys())[-1]
+        y = len(inputs)
+                
+        '''for x in range(0, BoxRadius*2+1):
+            for y in range(0, BoxRadius*2+1):
+                print(inputs[(x + 1) * (y + 1)], end="")
+            print("")
+        print("")'''
+        
         if len(inputs) != Inputs:
             print("Incorrect number of neural network inputs.")
             return {}
     
-        for i in range(0,Inputs):
+        for i in range(1,Inputs + 1):
             self.neurons[i].value = inputs[i]
             
         for neuron in self.neurons.values():
@@ -65,8 +73,8 @@ class Network:
                     neuron.value = sigmoid(sum)
                 
         outputs = {}
-        for o in range(0,Outputs):
-            button = ButtonNames[o]
+        for o in range(1,Outputs + 1):
+            button = ButtonNames[o - 1]
             #if self.neurons[MaxNodes+o].value > 0:
             if self.neurons[MaxNodes + o].value > 0:
                 outputs[button] = True
