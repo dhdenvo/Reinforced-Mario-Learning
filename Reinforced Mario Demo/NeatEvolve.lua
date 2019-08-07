@@ -816,7 +816,7 @@ function newGeneration()
         pool.generation = pool.generation + 1
 
         --writeFile("backup." .. pool.generation .. "." .. forms.gettext(saveLoadFile))
-        writeFile("Backups/Backup - " .. pool.generation .. ".txt")
+        writeFile("LuigiBackups/Backup - " .. pool.generation .. ".txt")
 end
 
 function initializePool()
@@ -1208,7 +1208,7 @@ while true do
             pool.maxFitness = fitness
             gui.text(5, 8, "Max Fitness: " .. math.floor(pool.maxFitness))
 --			forms.settext(maxFitnessLabel, "Max Fitness: " .. math.floor(pool.maxFitness))
-    writeFile("Backups/Backup - " .. pool.generation .. ".txt")
+    writeFile("LuigiBackups/Backup - " .. pool.generation .. ".txt")
 --			writeFile("backup." .. pool.generation .. "." .. forms.gettext(saveLoadFile))
     end
 
