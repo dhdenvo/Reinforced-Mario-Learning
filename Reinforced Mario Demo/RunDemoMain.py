@@ -8,8 +8,8 @@ def invalid_parameters():
 load = False
 
 params = sys.argv[1:]
-valid_params = ["-rom", "-gen", "-uni"]
-params_out = ["Super Mario Bros (Machine Learned).nes", "0", "True"]
+valid_params = ["-rom", "-gen", "-uni", "-create"]
+params_out = ["Super Mario Bros (Machine Learned).nes", "0", "True", "False"]
 completed_params = []
 
 if len(params) > 0 and len(params) % 2 == 0:
@@ -30,15 +30,23 @@ if len(params) > 0 and len(params) % 2 == 0:
 else:
     invalid_parameters()
                 
-backup_loc = "Universal Backups"
-if params_out[valid_params.index("-uni")].lower() == "false":
-    backup_loc = "Backups - " + params_out[valid_params.index("-rom")]
-elif params_out[valid_params.index("-uni")].lower() != "true":
+backup_loc = "Backups - " + params_out[valid_params.index("-rom")]
+if params_out[valid_params.index("-uni")].lower() == "true":
+    backup_loc = "Universal Backups"
+    
+    comment = ""
+    if params_out[valid_params.index("-create")].lower() == "false":
+        comment = "-- "
+    elif params_out[valid_params.index("-create")].lower() != "true":
+        invalid_parameters()
+        
+elif params_out[valid_params.index("-uni")].lower() != "false":
     invalid_parameters()
 
 lua_script = open("NeatEvolve.lua", "r")
 running_script = open("RunningEvolve.lua", "w")
-script_text = lua_script.read().replace("David Was Here!!!!", backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load).lower()).replace("LuigiBackups", backup_loc)
+script_text = lua_script.read().replace("David Was Here!!!!", backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load).lower()) \
+    .replace("LuigiBackups", backup_loc).replace("BowserComment ", comment)
 running_script.write(script_text)
 
 run_demo_cmd = 'fceux "' + params_out[valid_params.index("-rom")] + '"'
