@@ -45,8 +45,15 @@ elif params_out[valid_params.index("-uni")].lower() != "false":
 
 lua_script = open("NeatEvolve.lua", "r")
 running_script = open("RunningEvolve.lua", "w")
-script_text = lua_script.read().replace("David Was Here!!!!", backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load).lower()) \
-    .replace("LuigiBackups", backup_loc).replace("BowserComment ", comment)
+
+replace = {"David Was Here!!!!": backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt", "Mario Jumpman Mario": str(load).lower(), "LuigiBackups": backup_loc, "BowserComment ": comment}
+script_text = lua_script.read()
+for before, after in replace.items():
+    script_text = script_text.replace(before, after)
+   
+#script_text = lua_script.read().replace("David Was Here!!!!", backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load).lower()) \
+#    .replace("LuigiBackups", backup_loc).replace("BowserComment ", comment)    
+    
 running_script.write(script_text)
 
 run_demo_cmd = 'fceux "' + params_out[valid_params.index("-rom")] + '"'
