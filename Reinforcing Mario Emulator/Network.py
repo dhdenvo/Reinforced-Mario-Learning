@@ -7,7 +7,7 @@ def sigmoid(x):
 
 class Network:
     def __init__(self, genome):
-        self.neurons = [None for neur in range(MaxNodes + Outputs + 1)]
+        self.neurons = {}
     
         for i in range(0,Inputs):
             self.neurons[i] = Neuron()
@@ -24,19 +24,16 @@ class Network:
             gene = genome.genes[i]
             if gene.enabled:
                 #print(self.neurons[gene.out])
-                try:
-                    if self.neurons[gene.out] == None:
-                        self.neurons[gene.out] = Neuron()
-                except IndexError:
-                    self.neurons[gene.out] = Neuron()               
+                #if self.neurons.get(gene.out, None) == None:
+                #    self.neurons[gene.out] = Neuron()       
+                self.neurons.setdefault(gene.out, Neuron())
                 
                 neuron = self.neurons[gene.out]
                 neuron.incoming.append(gene)
-                try:
-                    if self.neurons[gene.into] == None:
-                        self.neurons[gene.into] = Neuron()
-                except IndexError:
-                    pass
+                #if self.neurons.get(gene.into, None) == None:
+                #    self.neurons[gene.into] = Neuron()
+                self.neurons.setdefault(gene.into, Neuron())
+            
     
         #genome.network = network  
         
@@ -53,7 +50,7 @@ class Network:
         for i in range(0,Inputs):
             self.neurons[i].value = inputs[i]
             
-        for neuron in self.neurons:
+        for neuron in self.neurons.values():
             sum = 0
             #if not neuron.equal(Neuron()):
             #    print("HELLOOOO")
