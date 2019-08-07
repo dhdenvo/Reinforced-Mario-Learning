@@ -12,7 +12,7 @@ valid_params = ["-rom", "-gen", "-uni", "-create"]
 params_out = ["Super Mario Bros (Machine Learned).nes", "0", "True", "False"]
 completed_params = []
 
-if len(params) > 0 and len(params) % 2 == 0:
+if len(params) % 2 == 0:
     param_value = -1
     for i, param in enumerate(params):
         if i % 2 == 0:
