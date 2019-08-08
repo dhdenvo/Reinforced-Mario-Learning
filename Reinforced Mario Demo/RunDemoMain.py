@@ -10,6 +10,7 @@ load = False
 params = sys.argv[1:]
 valid_params = ["-rom", "-gen", "-uni", "-create"]
 params_out = ["Super Mario Bros (Machine Learned).nes", "0", "True", "False"]
+default_rom = params_out[0]
 completed_params = []
 
 if len(params) % 2 == 0:
@@ -31,16 +32,14 @@ else:
     invalid_parameters()
                 
 backup_loc = "Backups - " + params_out[valid_params.index("-rom")]
-if params_out[valid_params.index("-uni")].lower() == "true":
-    backup_loc = "Universal Backups"
-    
-    comment = ""
-    if params_out[valid_params.index("-create")].lower() == "false":
-        comment = "-- "
-    elif params_out[valid_params.index("-create")].lower() != "true":
-        invalid_parameters()
-        
+comment = "-- "
+if params_out[valid_params.index("-uni")].lower() == "true" or params_out[valid_params.index("-rom")] == default_rom:
+    backup_loc = "Universal Backups"        
 elif params_out[valid_params.index("-uni")].lower() != "false":
+    invalid_parameters()
+if params_out[valid_params.index("-create")].lower() == "true":
+    comment = ""
+elif params_out[valid_params.index("-create")].lower() != "false":
     invalid_parameters()
 
 lua_script = open("NeatEvolve.lua", "r")
@@ -50,7 +49,7 @@ replace = {"David Was Here!!!!": backup_loc + "/Backup - " + params_out[valid_pa
 script_text = lua_script.read()
 for before, after in replace.items():
     script_text = script_text.replace(before, after)
-   
+       
 #script_text = lua_script.read().replace("David Was Here!!!!", backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt").replace("Mario Jumpman Mario", str(load).lower()) \
 #    .replace("LuigiBackups", backup_loc).replace("BowserComment ", comment)    
     
