@@ -103,6 +103,7 @@ while True:
     if pool.currentFrame % 5 == 0:
         pool.evaluateCurrent()
 
+    #print(pool.controller)
     control_input = calc_control_input(complex_controls, pool.controller)
     state, reward, done, info = env.step(control_input)
 
@@ -122,7 +123,7 @@ while True:
 
 
     timeoutBonus = pool.currentFrame / 4
-    if pool.timeout + timeoutBonus <= 0:
+    if pool.timeout + timeoutBonus <= 0 or done:
         fitness = pool.rightmost - pool.currentFrame / 2
         if pool.rightmost > 3186:
             fitness = fitness + 1000
