@@ -30,6 +30,10 @@ elseif gameinfo.getromname == "Super Mario Bros." then
         }
 
     joypad.write(1, {start=1})
+    for frame = 0, 30 do
+        emu.frameadvance()
+    end
+    joypad.write(1, {start=1})
     for frame = 0,160 do
         emu.frameadvance()
     end
