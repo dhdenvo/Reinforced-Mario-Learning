@@ -246,7 +246,7 @@ class Pool:
         if self.currentGenome > len(self.species[self.currentSpecies].genomes) - 1:
             self.currentGenome = 0
             self.currentSpecies = self.currentSpecies + 1
-            if self.currentSpecies > len(self.species):
+            if self.currentSpecies > len(self.species) - 1:
                 self.newGeneration()
                 self.currentSpecies = 0
                 

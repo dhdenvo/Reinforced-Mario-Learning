@@ -85,7 +85,7 @@ pool = None
 load = True
 pool = initializePool(env)
 if load:
-    pool.loadFile("Backups/Backup - 267.txt", env)
+    pool.loadFile("../Reinforced Mario Demo/Universal Backups/Backup - 267.txt", env)
 
 while True:
     #local backgroundColor = 0xD0FFFFFF
