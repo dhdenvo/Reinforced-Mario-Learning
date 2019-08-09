@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 #File Extraction Functions
 
@@ -153,7 +154,21 @@ print(level_one_loc)
 print(monster_one_loc)
 
 #Download the generated level of the game
-gen_level = load_doc("Mario Working Level.txt").split('\n')
+level_name = ""
+if len(sys.argv) == 1:
+    level_name = "Mario Working Level.txt"
+elif len(sys.argv) == 2:
+    level_name = sys.argv[1]
+else:
+    print("Invalid map file")
+    quit()
+    
+try:
+    gen_level = load_doc(level_name).split('\n')
+except:
+    print("Invalid map file")
+    quit()
+    
 #Gather the type dictionaries from a txt file
 type_dictionaries = load_dictionaries('Mario Type Dictionary.txt')
 #print(type_dictionaries)
@@ -281,4 +296,5 @@ clean_game = load_hex('ROM Files/Super Mario Bros (E) - Editted Version.nes')
 clean_game = clean_game[:monster_one_loc] + mon_hex + clean_game[monster_one_loc + len(mon_hex):]
 clean_game = clean_game[:level_one_loc + 2] + blo_hex + clean_game[level_one_loc + len(blo_hex) + 2:]
 
-save_hex('Super Mario Bros Testing.nes', clean_game)
+save_hex('../Reinforced Mario Demo/Super Mario Bros - ' + level_name.split(".")[0] + '.nes', clean_game)
+print("Created Rom File")

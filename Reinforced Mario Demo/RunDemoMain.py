@@ -42,6 +42,19 @@ if params_out[valid_params.index("-create")].lower() == "true":
 elif params_out[valid_params.index("-create")].lower() != "false":
     invalid_parameters()
 
+valid_backup = True
+try:
+    file_check = open(backup_loc + "/Backup - " + params_out[valid_params.index("-gen")] + ".txt", "r")
+    file_check.close()
+except FileNotFoundError:
+    valid_backup = False
+    
+if not valid_backup:
+    backup_loc = "Universal Backups"
+    comment = "-- "
+    params_out[valid_params.index("-gen")] = "0"
+    
+
 lua_script = open("NeatEvolve.lua", "r")
 running_script = open("RunningEvolve.lua", "w")
 

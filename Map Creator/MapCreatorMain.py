@@ -1,6 +1,7 @@
 import pygame
 import sys
 import gc
+import os
 from MainGui import MainGui
 
 pygame.init()
@@ -30,9 +31,14 @@ def create_level(gui):
         map_representation[y] = "".join(map_representation[y])
     map_representation = "\n".join(map_representation)
     
-    f = open("map.txt", "w")
+    level_name = "map.txt"
+    if len(sys.argv) == 2:
+        level_name = sys.argv[1]
+    
+    f = open("../Level Generator/" + level_name, "w")
     f.write(map_representation)
     f.close()
+    os.system("cd ../Level\ Generator/; python VirtualAdditionOfLevels.py " + level_name + " &")
     
 def move_map(gui, direction):
     gui.scroll(direction)
