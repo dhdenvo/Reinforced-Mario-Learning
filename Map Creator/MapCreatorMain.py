@@ -38,7 +38,10 @@ def create_level(gui):
     f = open("../Level Generator/" + level_name, "w")
     f.write(map_representation)
     f.close()
-    os.system("cd ../Level\ Generator/; python VirtualAdditionOfLevels.py " + level_name + " &")
+    os.system("cd ../Level\ Generator/; python VirtualAdditionOfLevels.py " + level_name)
+    print("Rom File Created")
+    os.system("cd ../Reinforced\ Mario\ Demo/; python RunDemoMain.py -rom Super Mario Bros - " + level_name.split(".")[0] + ".nes")
+    quit()
     
 def move_map(gui, direction):
     gui.scroll(direction)
