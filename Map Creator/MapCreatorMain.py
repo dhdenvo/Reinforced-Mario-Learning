@@ -33,10 +33,11 @@ def create_level(gui):
     
     level_name = "map.txt"
     gen = 0
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 1:
         level_name = sys.argv[1]
-    if len(sys.argv) > 3:
+    if len(sys.argv) > 2:
         gen = sys.argv[2]
+        print("Gen:" + gen)
         
     
     f = open("../Level Generator/" + level_name, "w")
@@ -44,7 +45,8 @@ def create_level(gui):
     f.close()
     os.system("cd ../Level\ Generator/; python VirtualAdditionOfLevels.py " + level_name)
     print("Rom File Created")
-    os.system("cd ../Reinforced\ Mario\ Demo/; python RunDemoMain.py -rom Super Mario Bros - " + level_name.split(".")[0] + ".nes" + " -gen " + gen)
+    print("cd ../Reinforced\ Mario\ Demo/; python RunDemoMain.py -rom Super Mario Bros - " + level_name.split(".")[0] + ".nes" + " -gen " + str(gen) + " -uni True")
+    os.system("cd ../Reinforced\ Mario\ Demo/; python RunDemoMain.py -rom 'Super Mario Bros - " + level_name.split(".")[0] + ".nes'" + " -gen " + str(gen) + " -uni True")
     quit()
     
 def move_map(gui, direction):

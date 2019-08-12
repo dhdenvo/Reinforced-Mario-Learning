@@ -1,8 +1,8 @@
 import os
 import sys
 
-def invalid_parameters():
-    print("Invalid parameters")
+def invalid_parameters(i):
+    print("Invalid parameters", i)
     sys.exit()    
 
 load = False
@@ -17,19 +17,22 @@ if len(params) % 2 == 0:
     param_value = -1
     for i, param in enumerate(params):
         if i % 2 == 0:
+            print(param)
+            print(valid_params)
+            print(completed_params)
             if param in valid_params and not param in completed_params:
                 param_value = valid_params.index(param) 
                 completed_params.append(param)
             else:
-                invalid_parameters()                
+                invalid_parameters(1)                
         else:
             if param_value == -1:
-                invalid_parameters()
+                invalid_parameters(2)
             else:
                 params_out[param_value] = param
     load = True
 else:
-    invalid_parameters()
+    invalid_parameters(3)
                 
 backup_loc = "Backups - " + params_out[valid_params.index("-rom")]
 comment = "-- "
