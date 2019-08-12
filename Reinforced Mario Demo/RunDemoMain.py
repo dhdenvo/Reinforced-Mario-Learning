@@ -71,5 +71,5 @@ for before, after in replace.items():
     
 running_script.write(script_text)
 
-run_demo_cmd = 'fceux "' + params_out[valid_params.index("-rom")] + '"'
+run_demo_cmd = 'fceux "' + params_out[valid_params.index("-rom")] + '" &'
 os.system(run_demo_cmd)
