@@ -27,7 +27,13 @@ def create_level(gui):
     for y in range(measurement[1]):
         map_representation.append(["-"] * length)
         for x in range(length):
-            map_representation[y][x] = map.get((x, y)).get_icon_string()
+            try:
+                if map.get((x, y)).get_icon_string() == map.get((x, y + 1)).get_icon_string():
+                    map_representation[y][x] = '-'
+                else:
+                    map_representation[y][x] = map.get((x, y)).get_icon_string()     
+            except AttributeError:
+                map_representation[y][x] = map.get((x, y)).get_icon_string()    
         map_representation[y] = "".join(map_representation[y])
     map_representation = "\n".join(map_representation)
     
