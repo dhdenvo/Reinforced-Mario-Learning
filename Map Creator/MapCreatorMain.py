@@ -11,6 +11,8 @@ pygame.display.set_caption('Mario World Creator')
 
 clock = pygame.time.Clock()
 
+MULTIICONS = ['H', 'K', '^', 'R', 'S', 'U', 'Y']
+
 def create_level(gui):
     map = gui.get_map()
     measurement = gui.get_map_measurements()
@@ -28,7 +30,7 @@ def create_level(gui):
         map_representation.append(["-"] * length)
         for x in range(length):
             try:
-                if map.get((x, y)).get_icon_string() == map.get((x, y + 1)).get_icon_string():
+                if map.get((x, y)).get_icon_string() in MULTIICONS and map.get((x, y)).get_icon_string() == map.get((x, y + 1)).get_icon_string():
                     map_representation[y][x] = '-'
                 else:
                     map_representation[y][x] = map.get((x, y)).get_icon_string()     
