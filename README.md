@@ -42,7 +42,7 @@ python DemoMain.py -game machine -name “Super Mario Bros – {*any name}.nes�
 
 **NeatEvolve - Neural Network Program Origin**
 
-The neatevolve.lua program was designed by [SethBling](https://www.youtube.com/watch?v=qv6UVOQ0F44). This code computes all the neural network sections of the project. I editted his code partially to make it work with the emulator [FCEUX](http://www.fceux.com/web/home.html) rather than [BlizHawk](http://tasvideos.org/BizHawk.html). Later on I converted his neatevolve.lua into python to work with the python package gym-super-mario-bros. My python version uses classes to define all of the neural network aspects that were defined in SethBling's lua version. The python version can be found in the repository in the directory "Reinforcing Mario Emulator". The python version is not used in the final demo.
+The neatevolve.lua program was designed by [SethBling](https://www.youtube.com/watch?v=qv6UVOQ0F44). This code computes all the neural network sections of the project. I editted his code partially to make it work with the emulator [FCEUX](http://www.fceux.com/web/home.html) rather than [BlizHawk](http://tasvideos.org/BizHawk.html). I also editted his code in the directory "Reinforced Mario Demo" to add options for specific runs of the demo. Later on, I converted his neatevolve.lua into python to work with the python package gym-super-mario-bros. My python version uses classes to define all of the neural network aspects that were defined in SethBling's lua version. The python version can be found in the repository in the directory "Reinforcing Mario Emulator". The python version is not used in the final demo.
 
 **Neural Network and Genetic Basics: (In Relation To This Program)**
 
