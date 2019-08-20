@@ -2,7 +2,7 @@
 
 **Instalation (Ubuntu):**
 
-git clone https://github.ibm.com/David-Daghelian/Reinforced-Mario-Learning.git
+git clone https://github.com/dhdenvo/Reinforced-Mario-Learning.git
 
 sudo apt-get update
 sudo apt-get install fceux
