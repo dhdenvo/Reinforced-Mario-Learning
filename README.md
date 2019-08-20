@@ -1,5 +1,7 @@
 # Reinforcement Learning Mario Program
 
+Note: All commmits from DavidDag are from dhdenvo (DavidDag is dhdenvo's previous enterprise github account)
+
 **Instalation (Ubuntu):**
 
 git clone https://github.com/dhdenvo/Reinforced-Mario-Learning.git
