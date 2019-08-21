@@ -1,6 +1,6 @@
 # Reinforcement Learning Mario Program
 
-Note: All commmits from DavidDag are from dhdenvo (DavidDag is dhdenvo's previous enterprise github account)
+Note: All commits from DavidDag are from [dhdenvo](https://github.com/dhdenvo) (DavidDag is dhdenvo's previous enterprise github account)
 
 **Instalation (Ubuntu):**
 
